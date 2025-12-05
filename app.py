@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory 
 import numpy as np
 import joblib
 import tensorflow as tf
 
 
 app = Flask(__name__, static_folder='')
+
 
 
 # Function to load model + scaler once
@@ -37,7 +38,7 @@ interpreter_tes, scaler_tes, in_tes, out_tes = load_model_and_scaler(
 
 @app.route('/')
 def index():
-    return send_from_directory('', 'ui.html')
+    return send_from_directory('', 'UI.html')
 
 
 @app.route('/predict', methods=['POST'])
@@ -92,7 +93,3 @@ def predict():
 if __name__ == '__main__':
     app.run(debug=False)
 
-
-import os
-port = int(os.environ.get("PORT", 5000))
-app.run(host="0.0.0.0", port=port)
