@@ -118,32 +118,32 @@
 
       </select>
 
-      <label>Equilibrium Temperature (K)</label>
-      <input type="number" name="f1" required />
-
-      <label>Heat of Reaction (kJ/mol)</label>
-      <input type="number" name="f2" required />
-
-      <label>Specific Heat Capacity of A (kJ/kg-K)</label>
-      <input type="number" name="f3" required />
-
-      <label>Specific Heat Capacity of B (kJ/kg-K)</label>
-      <input type="number" name="f4" required />
-
-      <label>Density of A (g/cm³)</label>
-      <input type="number" name="f5" required />
-
-      <label>Density of B (g/cm³)</label>
-      <input type="number" name="f6" required />
-
-      <label>Price ($/MT)</label>
-      <input type="number" name="f7" required />
-
-      <label>Stoichiometric Coefficient of C</label>
-      <input type="number" name="f8" required />
-
-      <label>Molecular Weight of A (g/mol)</label>
-      <input type="number" name="f9" required />
+      <label for="f1">Equilibrium Temperature (K)</label>
+      <input type="text" id="f1" name="f1" placeholder="Equilibrium Temperature (K)" required />
+      
+      <label for="f2">Heat of Reaction (kJ/mol)</label>
+      <input type="text" id="f2" name="f2" step="0.0000001" placeholder="Heat of Reaction (kJ/mol)" required />
+      
+      <label for="f3">Specific Heat Capacity of A (kJ/kg-K)</label>
+      <input type="text" id="f3" name="f3" step="0.0000001" min="0" placeholder="Specific Heat Capacity of A (kJ/kg-K)" required />
+      
+      <label for="f4">Specific Heat Capacity of B (kJ/kg-K)</label>
+      <input type="text" id="f4" name="f4" step="0.0000001" min="0" placeholder="Specific Heat Capacity of B (kJ/kg-K)" required />
+      
+      <label for="f5">Density of A (g/cm³)</label>
+      <input type="text" id="f5" name="f5" step="0.0000001" min="0" placeholder="Density of A (g/cm³)" required />
+      
+      <label for="f6">Density of B (g/cm³)</label>
+      <input type="text" id="f6" name="f6" step="0.0000001" min="0" placeholder="Density of B (g/cm³)" required />
+      
+      <label for="f7">Price ($/MT)</label>
+      <input type="text" id="f7" name="f7" step="0.0000001" min="0" placeholder="Price ($/MT)" required />
+      
+      <label for="f8">Stoichiometric Coefficient of C</label>
+      <input type="text" id="f8" name="f8" step="0.0000001" placeholder="Stoichiometric Coeff. of C" required />
+      
+      <label for="f9">Molecular Weight of A (g/mol)</label>
+      <input type="text" id="f9" name="f9" step="0.0000001" min="0" placeholder="Molecular Weight of A (g/mol)" required />
 
       <div class="actions">
         <button type="submit" id="submitBtn" disabled>Estimate</button>

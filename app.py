@@ -41,25 +41,40 @@ def index():
     return send_from_directory('', 'UI.html')
 
 
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
         model_choice = request.form['model_choice']  # "LCOE" or "TES"
 
-        # Collect features
-        features = [float(request.form[f'f{i+1}']) for i in range(9)]
+        # -----------------------------
+        # SAFE conversion of all inputs
+        # -----------------------------
+        features = []
+        for i in range(9):
+            raw = request.form.get(f'f{i+1}', "")
+
+            # Remove commas, spaces
+            cleaned = raw.replace(",", "").strip()
+
+            try:
+                value = float(cleaned)
+                features.append(value)
+            except ValueError:
+                return jsonify({
+                    'error': f"Invalid number in input f{i+1}: '{raw}'"
+                }), 400
+
         input_array = np.array([features], dtype=np.float32)
 
-
         # -------------------------
-        # LCOE → Run MULTIPLE MODELS
+        # LCOE → MULTIPLE MODELS
         # -------------------------
-        # Pick correct model
         if model_choice == 'LCOE':
             results = []
 
             for interpreter, scaler, input_details, output_details in lcoe_models:
-                # Scale input
                 input_scaled = scaler.transform(input_array).astype(np.float32)
 
                 interpreter.set_tensor(input_details[0]['index'], input_scaled)
@@ -70,7 +85,7 @@ def predict():
             return jsonify({'predictions': results})
 
         # -------------------------
-        # TES → Single Model
+        # TES → SINGLE MODEL
         # -------------------------
         elif model_choice == 'TES':
             input_scaled = scaler_tes.transform(input_array).astype(np.float32)
@@ -81,10 +96,9 @@ def predict():
             prediction = interpreter_tes.get_tensor(out_tes[0]['index'])[0][0]
 
             return jsonify({'prediction': round(float(prediction), 2)})
-        
+
         else:
             return jsonify({'error': 'Invalid model choice'}), 400
-
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
