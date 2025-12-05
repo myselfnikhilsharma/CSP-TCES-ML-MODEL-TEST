@@ -26,7 +26,7 @@ lcoe_models = [
     load_model_and_scaler("TRAINED MODEL FOR LCOE OPERATION AND MANAGEMENT.tflite", "SCALER FOR LCOE OPERATION AND MANAGEMENT.save"),
     load_model_and_scaler("TRAINED MODEL FOR LCOE POWER CYCLE.tflite", "SCALER FOR LCOE POWER CYCLE.save"),
     load_model_and_scaler("TRAINED MODEL FOR LCOE RECEIVER.tflite", "SCALER FOR LCOE RECEIVER.save"),
-    load_model_and_scaler("TRAINED MODEL FOR LCOE.tflite STORAGE", "SCALER FOR LCOE STORAGE.save"),
+    load_model_and_scaler("TRAINED MODEL FOR LCOE STORAGE.tflite", "SCALER FOR LCOE STORAGE.save"),
 ]
 
 
