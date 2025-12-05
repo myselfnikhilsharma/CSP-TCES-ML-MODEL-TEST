@@ -30,6 +30,15 @@ lcoe_models = [
     load_model_and_scaler("TRAINED MODEL FOR LCOE STORAGE.tflite", "SCALER FOR LCOE STORAGE.save"),
 ]
 
+model_names = [
+    "Overall LCOE",
+    "Collector contribution in LCOE",
+    "O&M contribution in LCOE",
+    "Power cycle contribution in LCOE",
+    "Receiver contribution in LCOE",
+    "Storage contribution in LCOE"
+]
+
 
 interpreter_tes, scaler_tes, in_tes, out_tes = load_model_and_scaler(
     "TRAINED MODEL FOR ESC.tflite", "SCALER FOR ESC.save"
@@ -82,7 +91,14 @@ def predict():
                 pred = interpreter.get_tensor(output_details[0]['index'])[0][0]
                 results.append(round(float(pred), 2))
 
-            return jsonify({'predictions': results})
+                
+
+            named_results = {
+                 model_names[i]: round(float(results[i]), 2)  
+                    for i in range(len(results))
+            }
+
+            return jsonify({'predictions': named_results})
 
         # -------------------------
         # TES → SINGLE MODEL
