@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thermal System Estimator</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Background with full page image and overlay */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+      position: relative;
+      transition: background-color 0.3s, color 0.3s;
+      background-image: url("Picture2.jpg");
+      background-size: 100% 50%;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* Overlay to dim background for readability */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 0;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      color: #e0e0e0;
+      background-color: #121212;
+      background-image: url('Picture2.jpg');
+      filter: brightness(0.6);
+    }
+
+    body.dark-mode::before {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    /* Main container styles */
+    .container {
+      position: relative;
+      z-index: 1; /* Above overlay */
+      background-color: rgba(249, 249, 249, 0.95);
+      width: 100%;
+      max-width: 500px;
+      border-radius: 16px;
+      padding: 30px 25px;
+      box-shadow: 0 0 15px rgba(0, 128, 0, 0.3);
+      transition: background-color 0.3s;
+    }
+
+    body.dark-mode .container {
+      background-color: rgba(30, 30, 30, 0.9);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-weight: 600;
+      color: #2e7d32;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode h2 {
+      color: #81c784;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 14px;
+      color: #444;
+      transition: color 0.3s;
+      user-select: none;
+    }
+
+    body.dark-mode label {
+      color: #ccc;
+    }
+
+    select, input {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #333;
+      font-size: 15px;
+      transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode select, 
+    body.dark-mode input {
+      background-color: #2a2a2a;
+      border-color: #555;
+      color: #e0e0e0;
+    }
+
+    select:focus, input:focus {
+      border-color: #2e7d32;
+      outline: 2px solid #a5d6a7;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 0;
+      background-color: #2e7d32;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #1b5e20;
+    }
+
+    button:disabled {
+      background-color: #9e9e9e;
+      cursor: default;
+    }
+
+    #prediction {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #2e7d32;
+      min-height: 1.5em;
+      transition: color 0.3s;
+      user-select: none;
+    }
+
+    body.dark-mode #prediction {
+      color: #81c784;
+    }
+
+    .error {
+      color: #d32f2f;
+    }
+
+    .loading {
+      color: #f57c00;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px 15px;
+      }
+
+      input, select, button {
+        font-size: 14px;
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Thermal Energy System Estimator Application">
+    <h2>Thermal Energy System Estimator</h2>
+    <form id="predictionForm" novalidate>
+      <label for="model_choice">Prediction Type</label>
+      <select id="model_choice" name="model_choice" required>
+        <option value="" disabled selected>Select Prediction Type</option>
+        <option value="LCOE">LCOE (Levelized Cost of Energy)</option>
+        <option value="TES">ESC (Energy Storage Cost)</option>
+        <option value="LCOE_COLLECTOR">LCOE (Levelized Cost of Energy) COLLECTOR </option>
+      </select>
+
+      <label for="f1">Equilibrium Temperature (K)</label>
+      <input type="number" id="f1" name="f1" step="0.01" min="0" placeholder="Equilibrium Temperature (K)" required />
+      
+      <label for="f2">Heat of Reaction (kJ/mol)</label>
+      <input type="number" id="f2" name="f2" step="0.01" placeholder="Heat of Reaction (kJ/mol)" required />
+      
+      <label for="f3">Specific Heat Capacity of A (kJ/kg-K)</label>
+      <input type="number" id="f3" name="f3" step="0.01" min="0" placeholder="Specific Heat Capacity of A (kJ/kg-K)" required />
+      
+      <label for="f4">Specific Heat Capacity of B (kJ/kg-K)</label>
+      <input type="number" id="f4" name="f4" step="0.01" min="0" placeholder="Specific Heat Capacity of B (kJ/kg-K)" required />
+      
+      <label for="f5">Density of A (g/cm³)</label>
+      <input type="number" id="f5" name="f5" step="0.01" min="0" placeholder="Density of A (g/cm³)" required />
+      
+      <label for="f6">Density of B (g/cm³)</label>
+      <input type="number" id="f6" name="f6" step="0.01" min="0" placeholder="Density of B (g/cm³)" required />
+      
+      <label for="f7">Price ($/MT)</label>
+      <input type="number" id="f7" name="f7" step="0.01" min="0" placeholder="Price ($/MT)" required />
+      
+      <label for="f8">Stoichiometric Coefficient of C</label>
+      <input type="number" id="f8" name="f8" step="0.01" placeholder="Stoichiometric Coeff. of C" required />
+      
+      <label for="f9">Molecular Weight of A (g/mol)</label>
+      <input type="number" id="f9" name="f9" step="0.01" min="0" placeholder="Molecular Weight of A (g/mol)" required />
+      
+      <div class="actions">
+        <button type="submit" id="submitBtn" disabled>Estimate</button>
+        <button type="button" id="clearBtn" aria-label="Clear all input fields">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('predictionForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const predictionOutput = document.getElementById('prediction');
+
+    // Enable submit button only if the form is valid
+    form.addEventListener('input', () => {
+      submitBtn.disabled = !form.checkValidity();
+    });
+
+    // Clear form and output
+    clearBtn.addEventListener('click', () => {
+      form.reset();
+      predictionOutput.textContent = '';
+      submitBtn.disabled = true;
+    });
+
+    // Dark mode toggle
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      predictionOutput.textContent = '';
+      submitBtn.disabled = true;
+
+      // Show loading state
+      predictionOutput.textContent = 'Estimating...';
+      predictionOutput.className = 'loading';
+
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+      formData.forEach((value, key) => params.append(key, value));
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params,
+        });
+
+        const result = await response.json();
+
+        if (result.prediction !== undefined) {
+          const valueFormatted = parseFloat(result.prediction).toFixed(2);
+
+          let unitText = '';
+          const modelChoice = formData.get('model_choice');
+          if (modelChoice === 'LCOE') {
+            unitText = ' $/kWh';
+          } else if (modelChoice === 'TES') {
+            unitText = ' $/kWh storage';
+          }
+
+          predictionOutput.textContent = `Estimated Value: ${valueFormatted}${unitText}`;
+          predictionOutput.className = '';
+        } else {
+          predictionOutput.textContent = `Error: ${result.error}`;
+          predictionOutput.className = 'error';
+        }
+      } catch (err) {
+        predictionOutput.textContent = "Prediction failed. Try again.";
+        predictionOutput.className = 'error';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
