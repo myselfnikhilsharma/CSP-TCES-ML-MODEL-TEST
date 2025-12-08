@@ -3,160 +3,288 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Thermal System Estimator</title>
+  <title>CSP–TES ML Estimator</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #eef7f3, #dbeaff);
       min-height: 100vh;
-      position: relative;
-      transition: background-color 0.3s, color 0.3s;
-      background-image: url("CST.jpg");
-      background-size: 100% 50%;
-      background-position: center;
-      background-repeat: no-repeat;
+      justify-content: stretch;
+      align-items: stretch;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      color: #333;
     }
 
+    /* -------------------- HEADER -------------------- */
 
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.35);
-      z-index: 0;
-    }
-
-    /* Main container styles */
-    .container {
-      position: relative;
-      z-index: 1; /* Above overlay */
-      background-color: rgba(249, 249, 249, 0.95);
+    .header-bar {
+      background: #103d06;
+      color: #fff;
+      padding: 18px 10px;
+      text-align: center;
+      position: sticky;
+      top: 0;
       width: 100%;
-      max-width: 500px;
-      border-radius: 16px;
-      padding: 30px 25px;
-      box-shadow: 0 0 15px rgba(0, 128, 0, 0.3);
-      transition: background-color 0.3s;
+      z-index: 50;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     }
+
+    .header-title {
+      font-size: 1.9em;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .banner {
+      margin-top: 6px;
+      overflow: hidden;
+      position: relative;
+      height: 25px;
+      color: #e7ffe7;
+      opacity: 0.85;
+    }
+
+    .banner-text {
+      position: absolute;
+      white-space: nowrap;
+      animation: slide-left 15s linear infinite;
+      font-size: 1.05em;
+    }
+
+    @keyframes slide-left {
+      from { transform: translateX(100%); }
+      to   { transform: translateX(-100%); }
+    }
+
+    /* -------------------- MAIN LAYOUT -------------------- */
+
+    .main-container {
+      display: flex;
+      gap: 20px;
+      padding: 110px 20px 40px;
+      flex: 1;
+    }
+
+    .left-column {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .image-box {
+      flex: 1.3;
+      background-image: url("CST2.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: none;
+    }
+
+    .info-box {
+      flex: 1;
+      background: rgba(255,255,255,0.7);
+      padding: 20px;
+      border-radius: 14px;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.5);
+      font-size: 15.5px;
+      line-height: 1.6;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    }
+
+    .right-column {
+      flex: 0.9;
+      background: rgba(255,255,255,0.85);
+      padding: 28px;
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.55);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+    }
+
+    /* -------------------- FORM -------------------- */
 
     h2 {
       text-align: center;
-      margin-bottom: 20px;
-      color: #2e7d32;
+      color: #1b6a35;
+      font-size: 24px;
+      margin-bottom: 22px;
       font-weight: 600;
     }
 
     label {
-      font-weight: 600;
-      margin-top: 8px;
+      font-weight: 500;
+      margin-top: 12px;
+      display: block;
     }
 
     input, select {
       width: 100%;
-      padding: 10px;
-      margin-top: 4px;
-      border: 1px solid #ccc;
+      padding: 12px;
+      margin-top: 5px;
       border-radius: 8px;
+      border: 1px solid #cfcfcf;
+      background: #ffffffd9;
       font-size: 15px;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #20944d;
+      outline: none;
+      box-shadow: 0 0 6px rgba(34,139,34,0.3);
     }
 
     .actions {
-      margin-top: 15px;
       display: flex;
-      gap: 10px;
+      gap: 12px;
+      margin-top: 20px;
     }
 
     button {
       flex: 1;
       padding: 12px;
-      background: #2e7d32;
-      color: white;
-      font-size: 16px;
+      font-size: 15px;
+      font-weight: 600;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
+      transition: 0.25s;
     }
 
-    button:disabled {
-      background: gray;
+    #submitBtn {
+      background: #054708;
+      color: white;
     }
+    #submitBtn:hover { background: #013104; }
+
+    #clearBtn {
+      background: #a32010;
+      color: white;
+    }
+    #clearBtn:hover { background: #c0392b; }
 
     #prediction {
-      margin-top: 18px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #2e7d32;
-      text-align: center;
+      margin-top: 15px;
+      font-size: 17px;
+      font-weight: 600;
+      color: #084312;
       min-height: 1.5em;
     }
 
-    .error { color: red; font-weight: bold; }
-    .loading { color: orange; font-weight: bold; }
+    .error { color: #8e0909; }
+    .loading { color: #9a5905; }
 
+    canvas {
+      margin-top: 20px;
+      background: transparent;
+    }
+
+    /* -------------------- RESPONSIVE -------------------- */
+
+    @media (max-width: 992px) {
+      .main-container { flex-direction: column; }
+      .right-column, .info-box { border-radius: 10px; }
+    }
   </style>
 </head>
+
 <body>
 
-  <div class="container">
-    <h2>Thermal Energy System Estimator</h2>
-
-    <form id="predictionForm" novalidate>
-
-      <label>Prediction Type</label>
-      <select id="model_choice" name="model_choice" required>
-        <option value="" disabled selected>Select Prediction Type</option>
-        <option value="LCOE">LCOE (Multiple Outputs)</option>
-        <option value="TES">ESC (Single Output)</option> 
-
-      </select>
-
-      <label for="f1">Equilibrium Temperature (K)</label>
-      <input type="text" id="f1" name="f1" placeholder="Equilibrium Temperature (K)" required />
-      
-      <label for="f2">Heat of Reaction (kJ/mol)</label>
-      <input type="text" id="f2" name="f2" step="0.0000001" placeholder="Heat of Reaction (kJ/mol)" required />
-      
-      <label for="f3">Specific Heat Capacity of A (kJ/kg-K)</label>
-      <input type="text" id="f3" name="f3" step="0.0000001" min="0" placeholder="Specific Heat Capacity of A (kJ/kg-K)" required />
-      
-      <label for="f4">Specific Heat Capacity of B (kJ/kg-K)</label>
-      <input type="text" id="f4" name="f4" step="0.0000001" min="0" placeholder="Specific Heat Capacity of B (kJ/kg-K)" required />
-      
-      <label for="f5">Density of A (g/cm³)</label>
-      <input type="text" id="f5" name="f5" step="0.0000001" min="0" placeholder="Density of A (g/cm³)" required />
-      
-      <label for="f6">Density of B (g/cm³)</label>
-      <input type="text" id="f6" name="f6" step="0.0000001" min="0" placeholder="Density of B (g/cm³)" required />
-      
-      <label for="f7">Price ($/MT)</label>
-      <input type="text" id="f7" name="f7" step="0.0000001" min="0" placeholder="Price ($/MT)" required />
-      
-      <label for="f8">Stoichiometric Coefficient of C</label>
-      <input type="text" id="f8" name="f8" step="0.0000001" placeholder="Stoichiometric Coeff. of C" required />
-      
-      <label for="f9">Molecular Weight of A (g/mol)</label>
-      <input type="text" id="f9" name="f9" step="0.0000001" min="0" placeholder="Molecular Weight of A (g/mol)" required />
-
-      <div class="actions">
-        <button type="submit" id="submitBtn" disabled>Estimate</button>
-        <button type="button" id="clearBtn">Clear</button>
+  <!-- HEADER -->
+  <div class="header-bar">
+    <div class="header-title">
+      CSP–TES ML Tool: Predict Optimal LCOE & Storage Cost
+    </div>
+    <div class="banner">
+      <div class="banner-text">
+        Developed by: Ishan Bajaj Research Group, IIT Kanpur &nbsp;|&nbsp; Contact: XYZ
       </div>
+    </div>
+  </div>
 
-    </form>
+  <!-- MAIN CONTENT -->
+  <div class="main-container">
 
-    <div id="prediction"></div>
-    <canvas id="barChart" style="margin-top:20px; width:100%; height:300px;"></canvas>
+    <!-- LEFT PART -->
+    <div class="left-column">
+      <div class="image-box"></div>
+
+      <div class="info-box">
+        <p>
+          A typical concentrated solar thermal (CSP) with thermochemical energy storage (TES) system comprises:
+          <br><br>
+          • <b>Solar Collectors</b><br>
+          • <b>High-Temperature Receivers</b><br>
+          • <b>Thermochemical Energy Storage Reactors</b><br>
+          • <b>Power Conversion Cycle</b><br>
+        </p>
+      </div>
+    </div>
+
+    <!-- RIGHT PART -->
+    <div class="right-column">
+      <h2>Thermal Energy System Estimator</h2>
+
+      <form id="predictionForm" novalidate>
+
+        <label>Prediction Type</label>
+        <select id="model_choice" name="model_choice" required>
+          <option value="" disabled selected>Select Prediction</option>
+          <option value="LCOE">Levelized Cost of Energy (LCOE)</option>
+          <option value="TES">Energy Storage Cost (ESC)</option>
+        </select>
+
+        <label>Equilibrium Temperature (K)</label>
+        <input type="number" id="f1" name="f1" required />
+
+        <label>Heat of Reaction (kJ/mol)</label>
+        <input type="number" id="f2" name="f2" required />
+
+        <label>Specific Heat Capacity of A (kJ/kg-K)</label>
+        <input type="number" id="f3" name="f3" required />
+
+        <label>Specific Heat Capacity of B (kJ/kg-K)</label>
+        <input type="number" id="f4" name="f4" required />
+
+        <label>Density of A (g/cm³)</label>
+        <input type="number" id="f5" name="f5" required />
+
+        <label>Density of B (g/cm³)</label>
+        <input type="number" id="f6" name="f6" required />
+
+        <label>Price ($/MT)</label>
+        <input type="number" id="f7" name="f7" required />
+
+        <label>Stoichiometric Coefficient of C</label>
+        <input type="number" id="f8" name="f8" required />
+
+        <label>Molecular Weight of A (g/mol)</label>
+        <input type="number" id="f9" name="f9" required />
+
+        <div class="actions">
+          <button type="submit" id="submitBtn" disabled>Estimate</button>
+          <button type="button" id="clearBtn">Clear</button>
+        </div>
+      </form>
+
+      <div id="prediction"></div>
+      <canvas id="barChart"></canvas>
+    </div>
 
   </div>
 
+  <!-- Chartjs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
@@ -165,19 +293,18 @@
     const clearBtn = document.getElementById("clearBtn");
     const output = document.getElementById("prediction");
 
-    // Enable submit button only when valid
     form.addEventListener("input", () => {
       submitBtn.disabled = !form.checkValidity();
     });
 
-    // Clear form
     clearBtn.addEventListener("click", () => {
       form.reset();
       output.textContent = "";
       submitBtn.disabled = true;
+
+      if (window.myBarChart) window.myBarChart.destroy();
     });
 
-    // Submit form
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       submitBtn.disabled = true;
@@ -199,52 +326,45 @@
         const result = await res.json();
         output.className = "";
 
-        // --- CASE 1: MULTIPLE OUTPUTS ---
         if (result.predictions) {
           output.innerHTML = "<b>Results:</b><br><br>";
           for (const key in result.predictions) {
             output.innerHTML += `${key}: ${result.predictions[key]} $/kWh<br>`;
           }
-          // --- BAR CHART LOGIC ---
+
           const labels = Object.keys(result.predictions);
           const values = Object.values(result.predictions);
 
-          // Destroy old chart if exists
-      	  if (window.myBarChart) {
-            window.myBarChart.destroy();
-          }
+          if (window.myBarChart) window.myBarChart.destroy();
           const ctx = document.getElementById("barChart").getContext("2d");
+
           window.myBarChart = new Chart(ctx, {
             type: "bar",
             data: {
-              labels: labels,
+              labels,
               datasets: [{
-                label: "Model Outputs ($/kWh)",
+                label: "Outputs ($/kWh)",
                 data: values,
                 borderWidth: 1
-               }]
-             },
-             options: {
-               responsive: true,
-               scales: {
-                 y: { beginAtZero: true }
-               }
-             }
-           });
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: { y: { beginAtZero: true } }
+            }
+          });
         }
 
-        // --- CASE 2: SINGLE OUTPUT ---
         else if (result.prediction !== undefined) {
           output.textContent = `Estimated Value: ${result.prediction} $/kWh`;
         }
 
-        // ERROR
         else {
           output.textContent = "Error: " + result.error;
           output.className = "error";
         }
 
-      } catch (err) {
+      } catch {
         output.textContent = "Prediction failed.";
         output.className = "error";
       }
