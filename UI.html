@@ -83,7 +83,7 @@
 
     .image-box {
       flex: 1.3;
-      background-image: url("CST2.png");
+      background-image: url("CST.png");
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
@@ -238,12 +238,7 @@
 
       <form id="predictionForm" novalidate>
 
-        <label>Prediction Type</label>
-        <select id="model_choice" name="model_choice" required>
-          <option value="" disabled selected>Select Prediction</option>
-          <option value="LCOE">Levelized Cost of Energy (LCOE)</option>
-          <option value="TES">Energy Storage Cost (ESC)</option>
-        </select>
+        <!-- All models will run by default; provide only input features below -->
 
         <label>Equilibrium Temperature (K)</label>
         <input type="number" id="f1" name="f1" required />
@@ -279,7 +274,14 @@
       </form>
 
       <div id="prediction"></div>
-      <canvas id="barChart"></canvas>
+      <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:300px;">
+          <canvas id="lcoeChart"></canvas>
+        </div>
+        <div style="flex:1; min-width:300px;">
+          <canvas id="escChart"></canvas>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -335,32 +337,62 @@
           const labels = Object.keys(result.predictions);
           const values = Object.values(result.predictions);
 
-          if (window.myBarChart) window.myBarChart.destroy();
-          const ctx = document.getElementById("barChart").getContext("2d");
+          // Build stacked LCOE chart: single stacked bar with segments = components
+          const lcoeLabels = ["LCOE"];
+          const lcoeComponentNames = labels; // model names
+          const lcoeValues = values;
 
-          window.myBarChart = new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels,
-              datasets: [{
-                label: "Outputs ($/kWh)",
-                data: values,
-                borderWidth: 1
-              }]
-            },
+          // generate colors
+          const palette = [
+            '#4caf50','#2196f3','#ffc107','#ff5722','#9c27b0','#00bcd4','#8bc34a','#ff9800'
+          ];
+
+          // prepare datasets where each dataset has a single data point (for stacked bar)
+          const lcoeDatasets = lcoeComponentNames.map((name, i) => ({
+            label: name,
+            data: [lcoeValues[i]],
+            backgroundColor: palette[i % palette.length]
+          }));
+
+          if (window.lcoeChart) window.lcoeChart.destroy();
+          const lctx = document.getElementById("lcoeChart").getContext("2d");
+          window.lcoeChart = new Chart(lctx, {
+            type: 'bar',
+            data: { labels: lcoeLabels, datasets: lcoeDatasets },
             options: {
               responsive: true,
-              scales: { y: { beginAtZero: true } }
+              plugins: { legend: { position: 'bottom' } },
+              scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
             }
           });
-        }
 
-        else if (result.prediction !== undefined) {
-          output.textContent = `Estimated Value: ${result.prediction} $/kWh`;
-        }
+          // ESC stacked bar (supports multiple ESC models)
+          if (result.esc && result.esc.length) {
+            const escLabels = ["ESC"];
+            const escNames = result.esc_model_names || result.esc.map((_,i) => `ESC Model ${i+1}`);
+            const escValues = result.esc;
 
-        else {
-          output.textContent = "Error: " + result.error;
+            const escDatasets = escNames.map((name, i) => ({
+              label: name,
+              data: [escValues[i]],
+              backgroundColor: palette[(i+3) % palette.length]
+            }));
+
+            if (window.escChart) window.escChart.destroy();
+            const ectx = document.getElementById('escChart').getContext('2d');
+            window.escChart = new Chart(ectx, {
+              type: 'bar',
+              data: { labels: escLabels, datasets: escDatasets },
+              options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } },
+                scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+              }
+            });
+          }
+
+        } else {
+          output.textContent = "Error: " + (result.error || 'Unexpected response');
           output.className = "error";
         }
 

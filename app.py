@@ -40,9 +40,13 @@ model_names = [
 ]
 
 
-interpreter_tes, scaler_tes, in_tes, out_tes = load_model_and_scaler(
-    "TRAINED MODEL FOR ESC.tflite", "SCALER FOR ESC.save"
-)
+# Load one or more ESC/TES models. To add more ESC models, add additional
+# calls to `load_model_and_scaler` here and append names to `tes_model_names`.
+tes_models = [
+    load_model_and_scaler("TRAINED MODEL FOR ESC.tflite", "SCALER FOR ESC.save")
+]
+
+tes_model_names = ["ESC Model 1"]
 
 
 @app.route('/')
@@ -55,8 +59,6 @@ def index():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        model_choice = request.form['model_choice']  # "LCOE" or "TES"
-
         # -----------------------------
         # SAFE conversion of all inputs
         # -----------------------------
@@ -76,45 +78,33 @@ def predict():
                 }), 400
 
         input_array = np.array([features], dtype=np.float32)
+        # -------------------------
+        # LCOE → MULTIPLE MODELS (run all and return)
+        # -------------------------
+        results = []
+
+        for interpreter, scaler, input_details, output_details in lcoe_models:
+            input_scaled = scaler.transform(input_array).astype(np.float32)
+
+            interpreter.set_tensor(input_details[0]['index'], input_scaled)
+            interpreter.invoke()
+            pred = interpreter.get_tensor(output_details[0]['index'])[0][0]
+            results.append(round(float(pred), 2))
+
+        named_results = {model_names[i]: round(float(results[i]), 2) for i in range(len(results))}
 
         # -------------------------
-        # LCOE → MULTIPLE MODELS
+        # ESC/TES → run all ESC models and return list
         # -------------------------
-        if model_choice == 'LCOE':
-            results = []
+        esc_results = []
+        for (interpreter, scaler, in_details, out_details) in tes_models:
+            input_scaled_tes = scaler.transform(input_array).astype(np.float32)
+            interpreter.set_tensor(in_details[0]['index'], input_scaled_tes)
+            interpreter.invoke()
+            tes_prediction = interpreter.get_tensor(out_details[0]['index'])[0][0]
+            esc_results.append(round(float(tes_prediction), 2))
 
-            for interpreter, scaler, input_details, output_details in lcoe_models:
-                input_scaled = scaler.transform(input_array).astype(np.float32)
-
-                interpreter.set_tensor(input_details[0]['index'], input_scaled)
-                interpreter.invoke()
-                pred = interpreter.get_tensor(output_details[0]['index'])[0][0]
-                results.append(round(float(pred), 2))
-
-                
-
-            named_results = {
-                 model_names[i]: round(float(results[i]), 2)  
-                    for i in range(len(results))
-            }
-
-            return jsonify({'predictions': named_results})
-
-        # -------------------------
-        # TES → SINGLE MODEL
-        # -------------------------
-        elif model_choice == 'TES':
-            input_scaled = scaler_tes.transform(input_array).astype(np.float32)
-
-            interpreter_tes.set_tensor(in_tes[0]['index'], input_scaled)
-            interpreter_tes.invoke()
-
-            prediction = interpreter_tes.get_tensor(out_tes[0]['index'])[0][0]
-
-            return jsonify({'prediction': round(float(prediction), 2)})
-
-        else:
-            return jsonify({'error': 'Invalid model choice'}), 400
+        return jsonify({'predictions': named_results, 'esc': esc_results, 'esc_model_names': tes_model_names})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
