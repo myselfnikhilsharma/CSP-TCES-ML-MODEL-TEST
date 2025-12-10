@@ -60,7 +60,7 @@ tes_model_names = ["Overall ESC",
 
 @app.route('/')
 def index():
-    return send_from_directory('', 'UI test 2.html')
+    return send_from_directory('', 'UI.html')
 
 
 
