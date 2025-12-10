@@ -203,7 +203,7 @@
 
     <!-- LEFT -->
     <div class="left-column">
-      <div class="image-box"></div>
+      <div class="image-box">CSP Figure </div>
 
       <div class="info-box">
         <p>
@@ -290,8 +290,8 @@
       output.textContent = "";
       submitBtn.disabled = true;
 
-      if (window.lcoeChart) window.lcoeChart.destroy();
-      if (window.escChart) window.escChart.destroy();
+      if (window.lcoeChart && typeof window.lcoeChart.destroy === 'function') window.lcoeChart.destroy();
+      if (window.escChart && typeof window.escChart.destroy === 'function') window.escChart.destroy();
     });
 
     form.addEventListener("submit", async (e) => {
@@ -314,6 +314,11 @@
         });
 
         console.log('Response status:', res.status);
+        if (!res.ok) {
+          const bodyText = await res.text();
+          console.error('Server returned non-OK status', res.status, bodyText);
+          throw new Error('Server error: ' + res.status + ' - ' + bodyText);
+        }
         const result = await res.json();
         console.log('Response data:', result);
         output.className = "";
@@ -339,7 +344,7 @@
             backgroundColor: palette[i % palette.length]
           }));
 
-          if (window.lcoeChart) window.lcoeChart.destroy();
+          if (window.lcoeChart && typeof window.lcoeChart.destroy === 'function') window.lcoeChart.destroy();
           const ctx1 = document.getElementById("lcoeChart").getContext("2d");
           window.lcoeChart = new Chart(ctx1, {
             type: 'bar',
@@ -366,7 +371,7 @@
               backgroundColor: palette[(i+3) % palette.length]
             }));
 
-            if (window.escChart) window.escChart.destroy();
+            if (window.escChart && typeof window.escChart.destroy === 'function') window.escChart.destroy();
             const ctx2 = document.getElementById("escChart").getContext("2d");
             window.escChart = new Chart(ctx2, {
               type: 'bar',
