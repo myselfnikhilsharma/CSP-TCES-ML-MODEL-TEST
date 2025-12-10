@@ -14,49 +14,44 @@
     body {
       margin: 0;
       font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #eef7f3, #dbeaff);
+      background: linear-gradient(135deg, #e8f2ff, #eefdf5);
       min-height: 100vh;
-      justify-content: stretch;
-      align-items: stretch;
-      padding: 0;
       display: flex;
       flex-direction: column;
       color: #333;
     }
 
-    /* -------------------- HEADER -------------------- */
-
+    /* HEADER */
     .header-bar {
-      background: #103d06;
+      background: linear-gradient(90deg, #075a0e, #033e06);
       color: #fff;
-      padding: 18px 10px;
+      padding: 22px 10px;
       text-align: center;
       position: sticky;
       top: 0;
       width: 100%;
       z-index: 50;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 3px 12px rgba(0,0,0,0.3);
     }
 
     .header-title {
-      font-size: 1.9em;
+      font-size: 2.1em;
       font-weight: 600;
       letter-spacing: 1px;
     }
 
     .banner {
-      margin-top: 6px;
-      overflow: hidden;
-      position: relative;
-      height: 25px;
+      margin-top: 8px;
+      height: 26px;
       color: #e7ffe7;
-      opacity: 0.85;
+      opacity: 0.9;
+      overflow: hidden;
     }
 
     .banner-text {
       position: absolute;
       white-space: nowrap;
-      animation: slide-left 15s linear infinite;
+      animation: slide-left 16s linear infinite;
       font-size: 1.05em;
     }
 
@@ -65,139 +60,129 @@
       to   { transform: translateX(-100%); }
     }
 
-    /* -------------------- MAIN LAYOUT -------------------- */
-
+    /* MAIN CONTENT */
     .main-container {
       display: flex;
-      gap: 20px;
-      padding: 110px 20px 40px;
+      gap: 25px;
+      padding: 120px 30px 50px;
       flex: 1;
     }
 
+    /* LEFT COLUMN */
     .left-column {
-      flex: 1.2;
+      flex: 1.3;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 25px;
     }
 
     .image-box {
       flex: 1.3;
-      background-image: url("CST.png");
+      background-image: url("CST2.png");
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
-      border: none;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+      background-color: #fff;
     }
 
     .info-box {
       flex: 1;
-      background: rgba(255,255,255,0.7);
-      padding: 20px;
+      background: rgba(255,255,255,0.8);
+      padding: 22px;
       border-radius: 14px;
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.5);
-      font-size: 15.5px;
-      line-height: 1.6;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-    }
-
-    .right-column {
-      flex: 0.9;
-      background: rgba(255,255,255,0.85);
-      padding: 28px;
-      border-radius: 14px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(8px);
       border: 1px solid rgba(255,255,255,0.55);
-      box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+      font-size: 16px;
+      line-height: 1.7;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
     }
 
-    /* -------------------- FORM -------------------- */
+    /* RIGHT COLUMN */
+    .right-column {
+      flex: 0.8;
+      background: rgba(255,255,255,0.95);
+      padding: 32px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.55);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
 
     h2 {
       text-align: center;
-      color: #1b6a35;
-      font-size: 24px;
-      margin-bottom: 22px;
+      color: #136027;
+      font-size: 26px;
+      margin-bottom: 28px;
       font-weight: 600;
     }
 
+    /* FORM */
     label {
       font-weight: 500;
-      margin-top: 12px;
+      margin-top: 15px;
       display: block;
+      font-size: 15px;
     }
 
     input, select {
       width: 100%;
       padding: 12px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid #cfcfcf;
-      background: #ffffffd9;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid #c3c3c3;
+      background: #ffffffee;
       font-size: 15px;
-      transition: all 0.2s;
+      transition: 0.2s;
     }
 
     input:focus, select:focus {
-      border-color: #20944d;
+      border-color: #1a7f38;
       outline: none;
-      box-shadow: 0 0 6px rgba(34,139,34,0.3);
+      box-shadow: 0 0 8px rgba(34,139,34,0.33);
     }
 
+    /* BUTTONS */
     .actions {
       display: flex;
       gap: 12px;
-      margin-top: 20px;
+      margin-top: 25px;
     }
 
     button {
       flex: 1;
-      padding: 12px;
+      padding: 13px;
       font-size: 15px;
       font-weight: 600;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       transition: 0.25s;
     }
 
     #submitBtn {
-      background: #054708;
+      background: linear-gradient(135deg, #0b6f12, #044408);
       color: white;
     }
-    #submitBtn:hover { background: #013104; }
-
     #clearBtn {
-      background: #a32010;
+      background: #c62828;
       color: white;
     }
-    #clearBtn:hover { background: #c0392b; }
 
     #prediction {
-      margin-top: 15px;
+      margin-top: 18px;
       font-size: 17px;
       font-weight: 600;
       color: #084312;
       min-height: 1.5em;
     }
 
-    .error { color: #8e0909; }
-    .loading { color: #9a5905; }
+    .error { color: #b81616; }
+    .loading { color: #aa6c00; }
 
-    canvas {
-      margin-top: 20px;
-      background: transparent;
-    }
-
-    /* -------------------- RESPONSIVE -------------------- */
-
-    @media (max-width: 992px) {
-      .main-container { flex-direction: column; }
-      .right-column, .info-box { border-radius: 10px; }
-    }
   </style>
 </head>
+
 
 <body>
 
@@ -213,10 +198,10 @@
     </div>
   </div>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <div class="main-container">
 
-    <!-- LEFT PART -->
+    <!-- LEFT -->
     <div class="left-column">
       <div class="image-box"></div>
 
@@ -232,48 +217,50 @@
       </div>
     </div>
 
-    <!-- RIGHT PART -->
+    <!-- RIGHT -->
     <div class="right-column">
       <h2>Thermal Energy System Estimator</h2>
 
       <form id="predictionForm" novalidate>
 
-        <!-- All models will run by default; provide only input features below -->
+        <!-- ALL TEXT INPUTS AS REQUESTED -->
 
         <label>Equilibrium Temperature (K)</label>
-        <input type="number" id="f1" name="f1" required />
+        <input type="text" id="f1" name="f1" required />
 
         <label>Heat of Reaction (kJ/mol)</label>
-        <input type="number" id="f2" name="f2" required />
+        <input type="text" id="f2" name="f2" required />
 
         <label>Specific Heat Capacity of A (kJ/kg-K)</label>
-        <input type="number" id="f3" name="f3" required />
+        <input type="text" id="f3" name="f3" required />
 
         <label>Specific Heat Capacity of B (kJ/kg-K)</label>
-        <input type="number" id="f4" name="f4" required />
+        <input type="text" id="f4" name="f4" required />
 
         <label>Density of A (g/cm³)</label>
-        <input type="number" id="f5" name="f5" required />
+        <input type="text" id="f5" name="f5" required />
 
         <label>Density of B (g/cm³)</label>
-        <input type="number" id="f6" name="f6" required />
+        <input type="text" id="f6" name="f6" required />
 
         <label>Price ($/MT)</label>
-        <input type="number" id="f7" name="f7" required />
+        <input type="text" id="f7" name="f7" required />
 
         <label>Stoichiometric Coefficient of C</label>
-        <input type="number" id="f8" name="f8" required />
+        <input type="text" id="f8" name="f8" required />
 
         <label>Molecular Weight of A (g/mol)</label>
-        <input type="number" id="f9" name="f9" required />
+        <input type="text" id="f9" name="f9" required />
 
         <div class="actions">
           <button type="submit" id="submitBtn" disabled>Estimate</button>
           <button type="button" id="clearBtn">Clear</button>
         </div>
+
       </form>
 
       <div id="prediction"></div>
+
       <div style="display:flex; gap:16px; flex-wrap:wrap;">
         <div style="flex:1; min-width:300px;">
           <canvas id="lcoeChart"></canvas>
@@ -286,7 +273,6 @@
 
   </div>
 
-  <!-- Chartjs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
@@ -304,7 +290,8 @@
       output.textContent = "";
       submitBtn.disabled = true;
 
-      if (window.myBarChart) window.myBarChart.destroy();
+      if (window.lcoeChart) window.lcoeChart.destroy();
+      if (window.escChart) window.escChart.destroy();
     });
 
     form.addEventListener("submit", async (e) => {
@@ -334,59 +321,60 @@
             output.innerHTML += `${key}: ${result.predictions[key]} $/kWh<br>`;
           }
 
+          // Build LCOE stacked bar
           const labels = Object.keys(result.predictions);
           const values = Object.values(result.predictions);
 
-          // Build stacked LCOE chart: single stacked bar with segments = components
-          const lcoeLabels = ["LCOE"];
-          const lcoeComponentNames = labels; // model names
-          const lcoeValues = values;
-
-          // generate colors
           const palette = [
-            '#4caf50','#2196f3','#ffc107','#ff5722','#9c27b0','#00bcd4','#8bc34a','#ff9800'
+            '#4caf50','#2196f3','#ffc107','#ff5722','#9c27b0',
+            '#00bcd4','#8bc34a','#ff9800'
           ];
 
-          // prepare datasets where each dataset has a single data point (for stacked bar)
-          const lcoeDatasets = lcoeComponentNames.map((name, i) => ({
+          const datasets = labels.map((name, i) => ({
             label: name,
-            data: [lcoeValues[i]],
+            data: [values[i]],
             backgroundColor: palette[i % palette.length]
           }));
 
           if (window.lcoeChart) window.lcoeChart.destroy();
-          const lctx = document.getElementById("lcoeChart").getContext("2d");
-          window.lcoeChart = new Chart(lctx, {
+          const ctx1 = document.getElementById("lcoeChart").getContext("2d");
+          window.lcoeChart = new Chart(ctx1, {
             type: 'bar',
-            data: { labels: lcoeLabels, datasets: lcoeDatasets },
+            data: { labels: ["LCOE"], datasets },
             options: {
               responsive: true,
               plugins: { legend: { position: 'bottom' } },
-              scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+              scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true }
+              }
             }
           });
 
-          // ESC stacked bar (supports multiple ESC models)
+          // ESC stacked bar
           if (result.esc && result.esc.length) {
-            const escLabels = ["ESC"];
-            const escNames = result.esc_model_names || result.esc.map((_,i) => `ESC Model ${i+1}`);
-            const escValues = result.esc;
+            const escNames =
+              result.esc_model_names ||
+              result.esc.map((_, i) => `ESC Model ${i+1}`);
 
             const escDatasets = escNames.map((name, i) => ({
               label: name,
-              data: [escValues[i]],
+              data: [result.esc[i]],
               backgroundColor: palette[(i+3) % palette.length]
             }));
 
             if (window.escChart) window.escChart.destroy();
-            const ectx = document.getElementById('escChart').getContext('2d');
-            window.escChart = new Chart(ectx, {
+            const ctx2 = document.getElementById("escChart").getContext("2d");
+            window.escChart = new Chart(ctx2, {
               type: 'bar',
-              data: { labels: escLabels, datasets: escDatasets },
+              data: { labels: ["ESC"], datasets: escDatasets },
               options: {
                 responsive: true,
                 plugins: { legend: { position: 'bottom' } },
-                scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+                scales: {
+                  x: { stacked: true },
+                  y: { stacked: true, beginAtZero: true }
+                }
               }
             });
           }
@@ -403,8 +391,8 @@
 
       submitBtn.disabled = false;
     });
+
   </script>
 
 </body>
 </html>
-

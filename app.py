@@ -43,15 +43,24 @@ model_names = [
 # Load one or more ESC/TES models. To add more ESC models, add additional
 # calls to `load_model_and_scaler` here and append names to `tes_model_names`.
 tes_models = [
-    load_model_and_scaler("TRAINED MODEL FOR ESC.tflite", "SCALER FOR ESC.save")
+    load_model_and_scaler("TRAINED MODEL FOR ESC.tflite", "SCALER FOR ESC.save"),
+    load_model_and_scaler("TRAINED MODEL FOR ESC HEAT EXCHANGER.tflite", "SCALER FOR ESC HEAT EXCHANGER.save"),
+    load_model_and_scaler("TRAINED MODEL FOR ESC REACTOR.tflite", "SCALER FOR ESC REACTOR.save"),
+    load_model_and_scaler("TRAINED MODEL FOR ESC SOLID STORAGE TANK.tflite", "SCALER FOR ESC SOLID STORAGE TANK.save"),
+    load_model_and_scaler("TRAINED MODEL FOR ESC STORAGE MATERIAL.tflite", "SCALER FOR ESC STORAGE MATERIAL.save")
 ]
 
-tes_model_names = ["ESC Model 1"]
+tes_model_names = ["Overall ESC",
+                   "ESC Heat Exchanger",
+                   "ESC Reactor",
+                   "ESC Solid Storage Tank",
+                   "ESC Storage Material"
+]
 
 
 @app.route('/')
 def index():
-    return send_from_directory('', 'UI.html')
+    return send_from_directory('', 'UI test 2.html')
 
 
 
