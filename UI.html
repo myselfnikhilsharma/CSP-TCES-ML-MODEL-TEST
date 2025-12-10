@@ -304,6 +304,7 @@
       const formData = new FormData(form);
       const params = new URLSearchParams();
       formData.forEach((v, k) => params.append(k, v));
+      console.log('Sending form data:', params.toString());
 
       try {
         const res = await fetch("/predict", {
@@ -312,7 +313,9 @@
           body: params
         });
 
+        console.log('Response status:', res.status);
         const result = await res.json();
+        console.log('Response data:', result);
         output.className = "";
 
         if (result.predictions) {
@@ -380,12 +383,14 @@
           }
 
         } else {
-          output.textContent = "Error: " + (result.error || 'Unexpected response');
+          console.error('Invalid response format:', result);
+          output.textContent = "Error: " + (result.error || 'Unexpected response format');
           output.className = "error";
         }
 
-      } catch {
-        output.textContent = "Prediction failed.";
+      } catch (err) {
+        console.error('Fetch or parse error:', err);
+        output.textContent = "Prediction failed: " + err.message;
         output.className = "error";
       }
 
