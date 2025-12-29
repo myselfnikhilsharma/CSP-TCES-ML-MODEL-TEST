@@ -3,32 +3,33 @@ import numpy as np
 import joblib
 import tensorflow as tf
 
-
 app = Flask(__name__, static_folder='')
 
+# ========================================
+# LCOE MODELS - FIXED
+# ========================================
+lcoe_interpreters = []
+lcoe_scalers = []
+lcoe_input_details = []
+lcoe_output_details = []
 
+lcoe_paths = [
+    ("TRAINED MODEL FOR LCOE.tflite", "SCALER FOR LCOE.save"),
+    ("TRAINED MODEL FOR LCOE COLLECTOR.tflite", "SCALER FOR LCOE COLLECTOR.save"),
+    ("TRAINED MODEL FOR LCOE OPERATION AND MANAGEMENT.tflite", "SCALER FOR LCOE OPERATION AND MANAGEMENT.save"),
+    ("TRAINED MODEL FOR LCOE POWER CYCLE.tflite", "SCALER FOR LCOE POWER CYCLE.save"),
+    ("TRAINED MODEL FOR LCOE RECEIVER.tflite", "SCALER FOR LCOE RECEIVER.save"),
+    ("TRAINED MODEL FOR LCOE STORAGE.tflite", "SCALER FOR LCOE STORAGE.save")
+]
 
-# Function to load model + scaler once
-def load_model_and_scaler(model_path, scaler_path):
+for model_path, scaler_path in lcoe_paths:
     interpreter = tf.lite.Interpreter(model_path=model_path)
     interpreter.allocate_tensors()
     scaler = joblib.load(scaler_path)
-
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-
-    return interpreter, scaler, input_details, output_details
-
-
-# Load MULTIPLE LCOE models
-lcoe_models = [
-    load_model_and_scaler("TRAINED MODEL FOR LCOE.tflite", "SCALER FOR LCOE.save"),
-    load_model_and_scaler("TRAINED MODEL FOR LCOE COLLECTOR.tflite", "SCALER FOR LCOE COLLECTOR.save"),
-    load_model_and_scaler("TRAINED MODEL FOR LCOE OPERATION AND MANAGEMENT.tflite", "SCALER FOR LCOE OPERATION AND MANAGEMENT.save"),
-    load_model_and_scaler("TRAINED MODEL FOR LCOE POWER CYCLE.tflite", "SCALER FOR LCOE POWER CYCLE.save"),
-    load_model_and_scaler("TRAINED MODEL FOR LCOE RECEIVER.tflite", "SCALER FOR LCOE RECEIVER.save"),
-    load_model_and_scaler("TRAINED MODEL FOR LCOE STORAGE.tflite", "SCALER FOR LCOE STORAGE.save"),
-]
+    lcoe_interpreters.append(interpreter)
+    lcoe_scalers.append(scaler)
+    lcoe_input_details.append(interpreter.get_input_details())
+    lcoe_output_details.append(interpreter.get_output_details())
 
 model_names = [
     "Overall LCOE",
@@ -39,45 +40,48 @@ model_names = [
     "Storage contribution in LCOE"
 ]
 
+# ========================================
+# TES/ESC MODELS - FIXED
+# ========================================
+tes_interpreters = []
+tes_scalers = []
+tes_input_details = []
+tes_output_details = []
 
-# Load one or more ESC/TES models. To add more ESC models, add additional
-# calls to `load_model_and_scaler` here and append names to `tes_model_names`.
-tes_models = [
-    load_model_and_scaler("TRAINED MODEL FOR ESC.tflite", "SCALER FOR ESC.save"),
-    load_model_and_scaler("TRAINED MODEL FOR ESC HEAT EXCHANGER.tflite", "SCALER FOR ESC HEAT EXCHANGER.save"),
-    load_model_and_scaler("TRAINED MODEL FOR ESC REACTOR.tflite", "SCALER FOR ESC REACTOR.save"),
-    load_model_and_scaler("TRAINED MODEL FOR ESC SOLID STORAGE TANK.tflite", "SCALER FOR ESC SOLID STORAGE TANK.save"),
-    load_model_and_scaler("TRAINED MODEL FOR ESC STORAGE MATERIAL.tflite", "SCALER FOR ESC STORAGE MATERIAL.save")
+tes_paths = [
+    ("TRAINED MODEL FOR ESC.tflite", "SCALER FOR ESC.save"),
+    ("TRAINED MODEL FOR ESC HEAT EXCHANGER.tflite", "SCALER FOR ESC HEAT EXCHANGER.save"),
+    ("TRAINED MODEL FOR ESC REACTOR.tflite", "SCALER FOR ESC REACTOR.save"),
+    ("TRAINED MODEL FOR ESC SOLID STORAGE TANK.tflite", "SCALER FOR ESC SOLID STORAGE TANK.save"),
+    ("TRAINED MODEL FOR ESC STORAGE MATERIAL.tflite", "SCALER FOR ESC STORAGE MATERIAL.save")
 ]
+
+for model_path, scaler_path in tes_paths:
+    interpreter = tf.lite.Interpreter(model_path=model_path)
+    interpreter.allocate_tensors()
+    scaler = joblib.load(scaler_path)
+    tes_interpreters.append(interpreter)
+    tes_scalers.append(scaler)
+    tes_input_details.append(interpreter.get_input_details())
+    tes_output_details.append(interpreter.get_output_details())
 
 tes_model_names = ["Overall ESC",
                    "ESC Heat Exchanger",
                    "ESC Reactor",
                    "ESC Solid Storage Tank",
-                   "ESC Storage Material"
-]
-
+                   "ESC Storage Material"]
 
 @app.route('/')
 def index():
     return send_from_directory('', 'UI.html')
 
-
-
-
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # -----------------------------
-        # SAFE conversion of all inputs
-        # -----------------------------
         features = []
         for i in range(9):
             raw = request.form.get(f'f{i+1}', "")
-
-            # Remove commas, spaces
             cleaned = raw.replace(",", "").strip()
-
             try:
                 value = float(cleaned)
                 features.append(value)
@@ -87,37 +91,31 @@ def predict():
                 }), 400
 
         input_array = np.array([features], dtype=np.float32)
-        # -------------------------
-        # LCOE → MULTIPLE MODELS (run all and return)
-        # -------------------------
+        
+        # LCOE predictions
         results = []
-
-        for interpreter, scaler, input_details, output_details in lcoe_models:
-            input_scaled = scaler.transform(input_array).astype(np.float32)
-
-            interpreter.set_tensor(input_details[0]['index'], input_scaled)
-            interpreter.invoke()
-            pred = interpreter.get_tensor(output_details[0]['index'])[0][0]
+        for i in range(len(lcoe_interpreters)):
+            input_scaled = lcoe_scalers[i].transform(input_array).astype(np.float32)
+            lcoe_interpreters[i].set_tensor(lcoe_input_details[i][0]['index'], input_scaled)
+            lcoe_interpreters[i].invoke()
+            pred = lcoe_interpreters[i].get_tensor(lcoe_output_details[i][0]['index'])[0][0]
             results.append(round(float(pred), 2))
 
-        named_results = {model_names[i]: round(float(results[i]), 2) for i in range(len(results))}
+        named_results = {model_names[i]: results[i] for i in range(len(results))}
 
-        # -------------------------
-        # ESC/TES → run all ESC models and return list
-        # -------------------------
+        # ESC/TES predictions
         esc_results = []
-        for (interpreter, scaler, in_details, out_details) in tes_models:
-            input_scaled_tes = scaler.transform(input_array).astype(np.float32)
-            interpreter.set_tensor(in_details[0]['index'], input_scaled_tes)
-            interpreter.invoke()
-            tes_prediction = interpreter.get_tensor(out_details[0]['index'])[0][0]
+        for i in range(len(tes_interpreters)):
+            input_scaled_tes = tes_scalers[i].transform(input_array).astype(np.float32)
+            tes_interpreters[i].set_tensor(tes_input_details[i][0]['index'], input_scaled_tes)
+            tes_interpreters[i].invoke()
+            tes_prediction = tes_interpreters[i].get_tensor(tes_output_details[i][0]['index'])[0][0]
             esc_results.append(round(float(tes_prediction), 2))
 
         return jsonify({'predictions': named_results, 'esc': esc_results, 'esc_model_names': tes_model_names})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=False)
