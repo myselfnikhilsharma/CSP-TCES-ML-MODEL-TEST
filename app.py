@@ -13,6 +13,7 @@ lcoe_scalers = []
 lcoe_input_details = []
 lcoe_output_details = []
 
+# Only LCOE Storage is properly trained, others are replicas
 lcoe_paths = [
     ("TRAINED MODEL FOR LCOE.tflite", "SCALER FOR LCOE.save"),
     ("TRAINED MODEL FOR LCOE COLLECTOR.tflite", "SCALER FOR LCOE COLLECTOR.save"),
@@ -48,6 +49,7 @@ tes_scalers = []
 tes_input_details = []
 tes_output_details = []
 
+# Only ESC Heat Exchanger and ESC Storage Material are properly trained, others are replicas
 tes_paths = [
     ("TRAINED MODEL FOR ESC.tflite", "SCALER FOR ESC.save"),
     ("TRAINED MODEL FOR ESC HEAT EXCHANGER.tflite", "SCALER FOR ESC HEAT EXCHANGER.save"),
@@ -73,15 +75,26 @@ tes_model_names = ["Overall ESC",
 
 
 
-lcoe_feature_indices = []
-for scaler in lcoe_scalers:
-    n_features = scaler.n_features_in_
-    lcoe_feature_indices.append(list(range(n_features)))
+# UI sends 9 features: f1=Teq, f2=dH, f3=CpA, f4=CpB, f5=rhoA, f6=rhoB, f7=price, f8=nu_C, f9=MW_A
+# Replicas use all 9 features, properly trained models use specific features:
+lcoe_feature_indices = [
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],  # Overall LCOE (replica): all 9 features
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],  # COLLECTOR (replica): all 9 features
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],  # O&M (replica): all 9 features
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],  # POWER_CYCLE (replica): all 9 features
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],  # RECEIVER (replica): all 9 features
+    [0, 1, 2, 3, 5, 6, 7, 8]      # STORAGE (trained): Teq, dH, CpA, CpB, rhoB, price, nu_C, MW_A (8 features)
+]
 
-tes_feature_indices = []
-for scaler in tes_scalers:
-    n_features = scaler.n_features_in_
-    tes_feature_indices.append(list(range(n_features)))
+# UI sends 9 features: f1=Teq, f2=dH, f3=CpA, f4=CpB, f5=rhoA, f6=rhoB, f7=price, f8=nu_C, f9=MW_A
+# Replicas use all 9 features, properly trained models use specific features:
+tes_feature_indices = [
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],  # Overall ESC (replica): all 9 features
+    [0, 1, 2, 3, 4, 7, 8],        # Heat Exchanger (trained): Teq, dH, CpA, CpB, rhoA, nu_C, MW_A (7 features)
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],  # Reactor (replica): all 9 features
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],  # Solid Storage Tank (replica): all 9 features
+    [0, 1, 2, 3, 4, 5, 6, 7, 8]   # Storage Material (trained): all 9 features
+]
 
 print("LCOE models expect:", [len(idx) for idx in lcoe_feature_indices])
 print("TES models expect:", [len(idx) for idx in tes_feature_indices])
