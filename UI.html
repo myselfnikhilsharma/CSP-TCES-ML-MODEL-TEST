@@ -325,8 +325,18 @@
 
         if (result.predictions) {
           output.innerHTML = "<b>Results:</b><br><br>";
-          for (const key in result.predictions) {
-            output.innerHTML += `${key}: ${result.predictions[key]} $/kWh<br>`;
+          // Only display "Overall LCOE"
+          if (result.predictions["Overall LCOE"]) {
+            output.innerHTML += `Overall LCOE: ${result.predictions["Overall LCOE"]} $/kWh<br>`;
+          }
+          
+          // Display ESC values
+          if (result.esc && result.esc.length) {
+            output.innerHTML += "<br>";
+            const escNames = result.esc_model_names || result.esc.map((_, i) => `ESC Model ${i+1}`);
+            escNames.forEach((name, i) => {
+              output.innerHTML += `${name}: ${result.esc[i]} $/kWh<br>`;
+            });
           }
 
           // Build LCOE stacked bar
