@@ -434,8 +434,8 @@
         if (result.predictions) {
           output.innerHTML = "";
           // Display Overall LCOE as text
-          if (result.predictions["Overall LCOE"]) {
-            output.innerHTML = `<b>Results:</b><br><br>Overall LCOE: ${result.predictions["Overall LCOE"]} $/kWh`;
+          if (result.predictions["LCOE"]) {
+            output.innerHTML = `<b>Results:</b><br><br>Overall LCOE: ${result.predictions["LCOE"]} $/kWh`;
           }
 
           // Display overall ESC value as text
