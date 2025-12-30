@@ -122,14 +122,14 @@
       background-image: url("CST.png");
       background-size: contain;
       background-repeat: no-repeat;
-      background-position: center;
+      background-position: center bottom;
       border-radius: 12px;
       box-shadow: 0 6px 16px rgba(0,0,0,0.15);
       background-color: #fff;
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding-top: 15px;
+      padding: 15px 15px 80px 15px;
       font-size: 24px;
       font-weight: 600;
       color: #136027;
@@ -478,17 +478,31 @@
     .chart-container {
       opacity: 0;
       animation: fadeInUp 0.8s ease-out forwards;
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 25px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-      border: 1px solid rgba(76, 175, 80, 0.1);
-      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(76, 175, 80, 0.1);
+      border: 2px solid rgba(76, 175, 80, 0.15);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #4caf50, #2196f3, #ff9800, #e91e63, #9c27b0);
+      opacity: 0.7;
     }
 
     .chart-container:hover {
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2), 0 8px 20px rgba(76, 175, 80, 0.15);
+      transform: translateY(-4px);
+      border-color: rgba(76, 175, 80, 0.3);
     }
 
     @keyframes fadeInUp {
@@ -505,7 +519,7 @@
     .chart-wrapper {
       position: relative;
       height: 100%;
-      min-height: 350px;
+      min-height: 380px;
     }
 
     /* Progress Bar */
@@ -616,7 +630,7 @@
 
       <div id="prediction" style="margin-bottom:20px;"></div>
 
-      <div class="chart-container" style="margin-bottom:25px;">
+      <div class="chart-container" id="lcoeChartContainer" style="margin-bottom:25px; display:none;">
         <div class="chart-wrapper">
           <canvas id="lcoeChart"></canvas>
         </div>
@@ -624,7 +638,7 @@
 
       <div id="overallEsc" style="margin-bottom:20px;"></div>
 
-      <div class="chart-container">
+      <div class="chart-container" id="escChartContainer" style="display:none;">
         <div class="chart-wrapper">
           <canvas id="escChart"></canvas>
         </div>
@@ -642,6 +656,8 @@
     const output = document.getElementById("prediction");
     const overallEsc = document.getElementById("overallEsc");
     const progressBar = document.getElementById("progressBar");
+    const lcoeChartContainer = document.getElementById("lcoeChartContainer");
+    const escChartContainer = document.getElementById("escChartContainer");
 
     // Real-time validation for inputs
     const inputs = form.querySelectorAll('input[type="text"]');
@@ -675,6 +691,8 @@
       overallEsc.textContent = "";
       submitBtn.disabled = true;
       progressBar.style.display = 'none';
+      lcoeChartContainer.style.display = 'none';
+      escChartContainer.style.display = 'none';
 
       // Remove validation classes
       inputs.forEach(input => {
@@ -740,14 +758,14 @@
           }
 
           const palette = [
-            { bg: 'rgba(76, 175, 80, 0.9)', border: 'rgba(76, 175, 80, 1)' },
-            { bg: 'rgba(33, 150, 243, 0.9)', border: 'rgba(33, 150, 243, 1)' },
-            { bg: 'rgba(255, 193, 7, 0.9)', border: 'rgba(255, 193, 7, 1)' },
-            { bg: 'rgba(255, 87, 34, 0.9)', border: 'rgba(255, 87, 34, 1)' },
-            { bg: 'rgba(156, 39, 176, 0.9)', border: 'rgba(156, 39, 176, 1)' },
-            { bg: 'rgba(0, 188, 212, 0.9)', border: 'rgba(0, 188, 212, 1)' },
-            { bg: 'rgba(139, 195, 74, 0.9)', border: 'rgba(139, 195, 74, 1)' },
-            { bg: 'rgba(255, 152, 0, 0.9)', border: 'rgba(255, 152, 0, 1)' }
+            { bg: 'rgba(46, 204, 113, 0.85)', border: 'rgba(39, 174, 96, 1)', shadow: 'rgba(46, 204, 113, 0.4)' },
+            { bg: 'rgba(52, 152, 219, 0.85)', border: 'rgba(41, 128, 185, 1)', shadow: 'rgba(52, 152, 219, 0.4)' },
+            { bg: 'rgba(241, 196, 15, 0.85)', border: 'rgba(243, 156, 18, 1)', shadow: 'rgba(241, 196, 15, 0.4)' },
+            { bg: 'rgba(231, 76, 60, 0.85)', border: 'rgba(192, 57, 43, 1)', shadow: 'rgba(231, 76, 60, 0.4)' },
+            { bg: 'rgba(155, 89, 182, 0.85)', border: 'rgba(142, 68, 173, 1)', shadow: 'rgba(155, 89, 182, 0.4)' },
+            { bg: 'rgba(26, 188, 156, 0.85)', border: 'rgba(22, 160, 133, 1)', shadow: 'rgba(26, 188, 156, 0.4)' },
+            { bg: 'rgba(52, 73, 94, 0.85)', border: 'rgba(44, 62, 80, 1)', shadow: 'rgba(52, 73, 94, 0.4)' },
+            { bg: 'rgba(230, 126, 34, 0.85)', border: 'rgba(211, 84, 0, 1)', shadow: 'rgba(230, 126, 34, 0.4)' }
           ];
 
           // Create datasets for sub-models (for first bar - stacked)
@@ -756,24 +774,29 @@
             data: [values[i], 0],
             backgroundColor: palette[i % palette.length].bg,
             borderColor: palette[i % palette.length].border,
-            borderWidth: 2,
-            borderRadius: 8,
+            borderWidth: 2.5,
+            borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
             borderSkipped: false,
-            stack: 'stack0'
+            stack: 'stack0',
+            barThickness: 80,
+            maxBarThickness: 100
           }));
 
           // Add dataset for Overall LCOE (second bar)
           const overallDataset = {
             label: 'LCOE',
             data: [0, overallLcoeValue],
-            backgroundColor: 'rgba(27, 94, 32, 0.9)',
+            backgroundColor: 'rgba(21, 87, 36, 0.9)',
             borderColor: 'rgba(27, 94, 32, 1)',
-            borderWidth: 2,
-            borderRadius: 8,
+            borderWidth: 2.5,
+            borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
             borderSkipped: false,
-            stack: 'stack1'
+            stack: 'stack1',
+            barThickness: 80,
+            maxBarThickness: 100
           };
 
+          lcoeChartContainer.style.display = 'block';
           if (window.lcoeChart && typeof window.lcoeChart.destroy === 'function') window.lcoeChart.destroy();
           const ctx1 = document.getElementById("lcoeChart").getContext("2d");
           window.lcoeChart = new Chart(ctx1, {
@@ -786,33 +809,55 @@
               responsive: true,
               maintainAspectRatio: false,
               animation: {
-                duration: 1500,
-                easing: 'easeInOutQuart'
+                duration: 1800,
+                easing: 'easeInOutCubic',
+                animateRotate: true,
+                animateScale: true
+              },
+              interaction: {
+                mode: 'index',
+                intersect: false
               },
               layout: {
-                padding: { top: 10, bottom: 10 }
+                padding: { top: 20, bottom: 15, left: 15, right: 15 }
               },
               plugins: { 
                 legend: { 
                   position: 'bottom',
                   labels: {
-                    boxWidth: 18,
-                    padding: 15,
-                    font: { size: 12, family: 'Poppins', weight: '500' },
+                    boxWidth: 20,
+                    padding: 18,
+                    font: { size: 13, family: 'Poppins', weight: '600' },
                     usePointStyle: true,
-                    pointStyle: 'circle'
+                    pointStyle: 'rectRounded',
+                    color: '#2c3e50'
                   }
                 },
                 tooltip: {
-                  backgroundColor: 'rgba(0,0,0,0.85)',
-                  padding: 15,
-                  cornerRadius: 10,
-                  titleFont: { size: 14, weight: 'bold', family: 'Poppins' },
-                  bodyFont: { size: 13, family: 'Poppins' },
+                  enabled: true,
+                  backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                  padding: 16,
+                  cornerRadius: 12,
+                  titleFont: { size: 15, weight: 'bold', family: 'Poppins' },
+                  bodyFont: { size: 14, family: 'Poppins' },
                   displayColors: true,
-                  boxPadding: 8,
-                  borderColor: 'rgba(255,255,255,0.2)',
-                  borderWidth: 1
+                  boxPadding: 10,
+                  borderColor: 'rgba(76, 175, 80, 0.5)',
+                  borderWidth: 2,
+                  caretSize: 8,
+                  caretPadding: 10,
+                  callbacks: {
+                    label: function(context) {
+                      let label = context.dataset.label || '';
+                      if (label) {
+                        label += ': ';
+                      }
+                      if (context.parsed.y !== null) {
+                        label += '$' + context.parsed.y.toFixed(4) + '/kWh';
+                      }
+                      return label;
+                    }
+                  }
                 }
               },
               scales: {
@@ -823,9 +868,7 @@
                     drawBorder: false
                   },
                   ticks: { 
-                    font: { size: 13, weight: 'bold', family: 'Poppins' },
-                    color: '#136027',
-                    padding: 10
+                    display: false
                   }
                 },
                 y: {
@@ -833,20 +876,24 @@
                   beginAtZero: true,
                   title: { 
                     display: true, 
-                    text: 'Value ($/kWh)', 
-                    font: { size: 14, weight: 'bold', family: 'Poppins' },
+                    text: 'LCOE ($/kWh)', 
+                    font: { size: 15, weight: 'bold', family: 'Poppins' },
                     color: '#136027',
-                    padding: { bottom: 10 }
+                    padding: { bottom: 12 }
                   },
                   ticks: { 
-                    font: { weight: '600', family: 'Poppins', size: 11 },
-                    color: '#555',
-                    padding: 8
+                    font: { weight: '600', family: 'Poppins', size: 12 },
+                    color: '#34495e',
+                    padding: 10,
+                    callback: function(value) {
+                      return '$' + value.toFixed(3);
+                    }
                   },
                   grid: { 
-                    color: 'rgba(0,0,0,0.06)',
-                    lineWidth: 1,
-                    drawBorder: false
+                    color: 'rgba(149, 165, 166, 0.15)',
+                    lineWidth: 1.5,
+                    drawBorder: false,
+                    drawTicks: false
                   }
                 }
               }
@@ -867,24 +914,29 @@
               data: [result.esc[i], 0],
               backgroundColor: palette[(i+3) % palette.length].bg,
               borderColor: palette[(i+3) % palette.length].border,
-              borderWidth: 2,
-              borderRadius: 8,
+              borderWidth: 2.5,
+              borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
               borderSkipped: false,
-              stack: 'stack0'
+              stack: 'stack0',
+              barThickness: 80,
+              maxBarThickness: 100
             }));
 
             // Add dataset for Overall ESC (second bar)
             const escOverallDataset = {
               label: 'ESC',
               data: [0, overallESCValue],
-              backgroundColor: 'rgba(27, 94, 32, 0.9)',
+              backgroundColor: 'rgba(21, 87, 36, 0.9)',
               borderColor: 'rgba(27, 94, 32, 1)',
-              borderWidth: 2,
-              borderRadius: 8,
+              borderWidth: 2.5,
+              borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
               borderSkipped: false,
-              stack: 'stack1'
+              stack: 'stack1',
+              barThickness: 80,
+              maxBarThickness: 100
             };
 
+            escChartContainer.style.display = 'block';
             if (window.escChart && typeof window.escChart.destroy === 'function') window.escChart.destroy();
             const ctx2 = document.getElementById("escChart").getContext("2d");
             window.escChart = new Chart(ctx2, {
@@ -897,34 +949,56 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: {
-                  duration: 1500,
-                  easing: 'easeInOutQuart',
-                  delay: 300
+                  duration: 1800,
+                  easing: 'easeInOutCubic',
+                  delay: 300,
+                  animateRotate: true,
+                  animateScale: true
+                },
+                interaction: {
+                  mode: 'index',
+                  intersect: false
                 },
                 layout: {
-                  padding: { top: 10, bottom: 10 }
+                  padding: { top: 20, bottom: 15, left: 15, right: 15 }
                 },
                 plugins: { 
                   legend: { 
                     position: 'bottom',
                     labels: {
-                      boxWidth: 18,
-                      padding: 15,
-                      font: { size: 12, family: 'Poppins', weight: '500' },
+                      boxWidth: 20,
+                      padding: 18,
+                      font: { size: 13, family: 'Poppins', weight: '600' },
                       usePointStyle: true,
-                      pointStyle: 'circle'
+                      pointStyle: 'rectRounded',
+                      color: '#2c3e50'
                     }
                   },
                   tooltip: {
-                    backgroundColor: 'rgba(0,0,0,0.85)',
-                    padding: 15,
-                    cornerRadius: 10,
-                    titleFont: { size: 14, weight: 'bold', family: 'Poppins' },
-                    bodyFont: { size: 13, family: 'Poppins' },
+                    enabled: true,
+                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                    padding: 16,
+                    cornerRadius: 12,
+                    titleFont: { size: 15, weight: 'bold', family: 'Poppins' },
+                    bodyFont: { size: 14, family: 'Poppins' },
                     displayColors: true,
-                    boxPadding: 8,
-                    borderColor: 'rgba(255,255,255,0.2)',
-                    borderWidth: 1
+                    boxPadding: 10,
+                    borderColor: 'rgba(76, 175, 80, 0.5)',
+                    borderWidth: 2,
+                    caretSize: 8,
+                    caretPadding: 10,
+                    callbacks: {
+                      label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                          label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                          label += '$' + context.parsed.y.toFixed(4) + '/kWh-th';
+                        }
+                        return label;
+                      }
+                    }
                   }
                 },
                 scales: {
@@ -935,9 +1009,7 @@
                       drawBorder: false
                     },
                     ticks: { 
-                      font: { size: 13, weight: 'bold', family: 'Poppins' },
-                      color: '#136027',
-                      padding: 10
+                      display: false
                     }
                   },
                   y: {
@@ -945,20 +1017,24 @@
                     beginAtZero: true,
                     title: { 
                       display: true, 
-                      text: 'Value ($/kWh-th)', 
-                      font: { size: 14, weight: 'bold', family: 'Poppins' },
+                      text: 'ESC ($/kWh-th)', 
+                      font: { size: 15, weight: 'bold', family: 'Poppins' },
                       color: '#136027',
-                      padding: { bottom: 10 }
+                      padding: { bottom: 12 }
                     },
                     ticks: { 
-                      font: { weight: '600', family: 'Poppins', size: 11 },
-                      color: '#555',
-                      padding: 8
+                      font: { weight: '600', family: 'Poppins', size: 12 },
+                      color: '#34495e',
+                      padding: 10,
+                      callback: function(value) {
+                        return '$' + value.toFixed(3);
+                      }
                     },
                     grid: { 
-                      color: 'rgba(0,0,0,0.06)',
-                      lineWidth: 1,
-                      drawBorder: false
+                      color: 'rgba(149, 165, 166, 0.15)',
+                      lineWidth: 1.5,
+                      drawBorder: false,
+                      drawTicks: false
                     }
                   }
                 }
