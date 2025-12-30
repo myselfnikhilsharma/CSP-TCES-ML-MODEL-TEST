@@ -187,6 +187,14 @@
       min-height: 1.5em;
     }
 
+    #overallEsc {
+      margin: 14px 0 10px;
+      font-size: 17px;
+      font-weight: 600;
+      color: #084312;
+      min-height: 1.5em;
+    }
+
     .error { color: #b81616; }
     .loading { color: #aa6c00; }
 
@@ -269,13 +277,15 @@
 
       </form>
 
+      <div id="prediction"></div>
+
       <div style="display:flex; gap:20px;">
         <div style="flex:1; min-width:400px; height:400px;">
           <canvas id="lcoeChart"></canvas>
         </div>
       </div>
 
-      <div id="prediction"></div>
+      <div id="overallEsc"></div>
 
       <div style="display:flex; gap:20px;">
         <div style="flex:1; min-width:400px; height:400px;">
@@ -293,6 +303,7 @@
     const submitBtn = document.getElementById("submitBtn");
     const clearBtn = document.getElementById("clearBtn");
     const output = document.getElementById("prediction");
+    const overallEsc = document.getElementById("overallEsc");
 
     form.addEventListener("input", () => {
       submitBtn.disabled = !form.checkValidity();
@@ -301,6 +312,7 @@
     clearBtn.addEventListener("click", () => {
       form.reset();
       output.textContent = "";
+      overallEsc.textContent = "";
       submitBtn.disabled = true;
 
       if (window.lcoeChart && typeof window.lcoeChart.destroy === 'function') window.lcoeChart.destroy();
@@ -313,6 +325,7 @@
 
       output.textContent = "Estimating...";
       output.className = "loading";
+      overallEsc.textContent = "";
 
       const formData = new FormData(form);
       const params = new URLSearchParams();
@@ -337,18 +350,17 @@
         output.className = "";
 
         if (result.predictions) {
-          output.innerHTML = "<b>Results:</b><br><br>";
+          output.innerHTML = "";
           // Only display "Overall LCOE"
           if (result.predictions["Overall LCOE"]) {
-            output.innerHTML += `Overall LCOE: ${result.predictions["Overall LCOE"]} $/kWh<br>`;
+            output.innerHTML = `<b>Results:</b><br><br>Overall LCOE: ${result.predictions["Overall LCOE"]} $/kWh`;
           }
-          
-          // Display only overall ESC value
+
+          // Display only overall ESC value (separate block between charts)
+          overallEsc.innerHTML = "";
           if (result.esc && result.esc.length) {
-            output.innerHTML += "<br>";
-            // Calculate overall ESC (average of all ESC values)
             const overallESC = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length).toFixed(2);
-            output.innerHTML += `Overall ESC: ${overallESC} $/kWh<br>`;
+            overallEsc.innerHTML = `Overall ESC: ${overallESC} $/kWh`;
           }
 
           // Build LCOE stacked bar (exclude Overall LCOE)
@@ -413,12 +425,14 @@
           console.error('Invalid response format:', result);
           output.textContent = "Error: " + (result.error || 'Unexpected response format');
           output.className = "error";
+          overallEsc.textContent = "";
         }
 
       } catch (err) {
         console.error('Fetch or parse error:', err);
         output.textContent = "Prediction failed: " + err.message;
         output.className = "error";
+        overallEsc.textContent = "";
       }
 
       submitBtn.disabled = false;
