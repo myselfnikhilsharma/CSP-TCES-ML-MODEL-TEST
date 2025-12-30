@@ -129,27 +129,58 @@
 
     /* FORM */
     label {
-      font-weight: 500;
-      margin-top: 15px;
+      font-weight: 600;
+      margin-top: 18px;
       display: block;
       font-size: 15px;
+      color: #136027;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-icon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: #4caf50;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 11px;
+      line-height: 16px;
+      cursor: help;
+      font-weight: bold;
     }
 
     input, select {
       width: 100%;
-      padding: 12px;
-      margin-top: 6px;
-      border-radius: 10px;
-      border: 1px solid #c3c3c3;
-      background: #ffffffee;
+      padding: 14px;
+      margin-top: 8px;
+      border-radius: 12px;
+      border: 2px solid #e0e0e0;
+      background: #ffffff;
       font-size: 15px;
-      transition: 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    input:hover {
+      border-color: #4caf50;
+      box-shadow: 0 3px 8px rgba(76,175,80,0.15);
     }
 
     input:focus, select:focus {
       border-color: #1a7f38;
       outline: none;
-      box-shadow: 0 0 8px rgba(34,139,34,0.33);
+      box-shadow: 0 0 0 3px rgba(76,175,80,0.2);
+      background: #fafffe;
+    }
+
+    input::placeholder {
+      color: #999;
+      font-size: 13px;
+      font-style: italic;
     }
 
     /* BUTTONS */
@@ -187,52 +218,12 @@
       min-height: 1.5em;
     }
 
-    .overall-display {
-      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-      padding: 20px;
-      border-radius: 12px;
-      border: 2px solid #4caf50;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      margin-bottom: 15px;
-    }
-
-    .overall-label {
-      font-size: 15px;
-      font-weight: 500;
-      color: #2e7d32;
-      margin-bottom: 8px;
-    }
-
-    .overall-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: #1b5e20;
-    }
-
-    .chart-section {
-      margin-bottom: 35px;
-    }
-
-    .chart-container {
-      display: flex;
-      gap: 20px;
-      align-items: stretch;
-    }
-
-    .chart-box {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .overall-box {
-      flex: 0 0 220px;
-      display: flex;
-      align-items: center;
-    }
-
-    .chart-canvas-wrapper {
-      height: 400px;
+    #overallEsc {
+      margin: 14px 0 10px;
+      font-size: 17px;
+      font-weight: 600;
+      color: #084312;
+      min-height: 1.5em;
     }
 
     .error { color: #b81616; }
@@ -283,32 +274,32 @@
 
         <!-- ALL TEXT INPUTS AS REQUESTED -->
 
-        <label>Equilibrium Temperature (K)</label>
-        <input type="text" id="f1" name="f1" required />
+        <label>Equilibrium Temperature (K) <span class="info-icon" title="Temperature at which the forward and reverse redox reactions are in equilibrium for the TES material.">i</span></label>
+        <input type="text" id="f1" name="f1" placeholder="Enter value (e.g., 1200)" required />
 
-        <label>Heat of Reaction (kJ/mol)</label>
-        <input type="text" id="f2" name="f2" required />
+        <label>Heat of Reaction (kJ/mol) <span class="info-icon" title="Enthalpy change of the TES redox reaction per mole of reactant (endothermic in charging, exothermic in discharging).">i</span></label>
+        <input type="text" id="f2" name="f2" placeholder="Enter value (e.g., 178.5)" required />
 
-        <label>Specific Heat Capacity of A (kJ/kg-K)</label>
-        <input type="text" id="f3" name="f3" required />
+        <label>Specific Heat Capacity of A (kJ/kg-K) <span class="info-icon" title="Average specific heat of solid MOₓ (reactant) over the operating temperature range.">i</span></label>
+        <input type="text" id="f3" name="f3" placeholder="Enter value (e.g., 1.25)" required />
 
-        <label>Specific Heat Capacity of B (kJ/kg-K)</label>
-        <input type="text" id="f4" name="f4" required />
+        <label>Specific Heat Capacity of B (kJ/kg-K) <span class="info-icon" title="Average specific heat of solid MOᵧ (product) over the operating temperature range.">i</span></label>
+        <input type="text" id="f4" name="f4" placeholder="Enter value (e.g., 1.05)" required />
 
-        <label>Density of A (g/cm³)</label>
-        <input type="text" id="f5" name="f5" required />
+        <label>Density of A (g/cm³) <span class="info-icon" title="Density of solid MOₓ (reactant) at operating conditions.">i</span></label>
+        <input type="text" id="f5" name="f5" placeholder="Enter value (e.g., 3.58)" required />
 
-        <label>Density of B (g/cm³)</label>
-        <input type="text" id="f6" name="f6" required />
+        <label>Density of B (g/cm³) <span class="info-icon" title="Density of solid MOᵧ (product).">i</span></label>
+        <input type="text" id="f6" name="f6" placeholder="Enter value (e.g., 2.71)" required />
 
-        <label>Price ($/MT)</label>
-        <input type="text" id="f7" name="f7" required />
+        <label>Price ($/MT) <span class="info-icon" title="Material price of the redox pair per metric ton (feedstock cost).">i</span></label>
+        <input type="text" id="f7" name="f7" placeholder="Enter value (e.g., 450.00)" required />
 
-        <label>Stoichiometric Coefficient of C</label>
-        <input type="text" id="f8" name="f8" required />
+        <label>Stoichiometric Coefficient of C <span class="info-icon" title="Stoichiometric coefficient ν = (x–y)/2 in the redox pair MOₓ ⇌ MOᵧ + ν O₂.">i</span></label>
+        <input type="text" id="f8" name="f8" placeholder="Enter value (e.g., 3.0)" required />
 
-        <label>Molecular Weight of A (g/mol)</label>
-        <input type="text" id="f9" name="f9" required />
+        <label>Molecular Weight of A (g/mol) <span class="info-icon" title="Molecular weight of the solid MOₓ (reactant).">i</span></label>
+        <input type="text" id="f9" name="f9" placeholder="Enter value (e.g., 100.09)" required />
 
         <div class="actions">
           <button type="submit" id="submitBtn" disabled>Estimate</button>
@@ -319,37 +310,17 @@
 
       <div id="prediction" style="margin-bottom:14px;"></div>
 
-      <!-- LCOE Section -->
-      <div class="chart-section">
-        <div class="chart-container">
-          <div class="chart-box">
-            <div class="chart-canvas-wrapper">
-              <canvas id="lcoeChart"></canvas>
-            </div>
-          </div>
-          <div class="overall-box">
-            <div id="overallLcoe" class="overall-display" style="display:none; width:100%;">
-              <div class="overall-label">Overall LCOE</div>
-              <div id="overallLcoeValue" class="overall-value">--</div>
-            </div>
-          </div>
+      <div style="display:flex; gap:20px; margin-bottom:12px;">
+        <div style="flex:1; min-width:400px; height:400px;">
+          <canvas id="lcoeChart"></canvas>
         </div>
       </div>
 
-      <!-- ESC Section -->
-      <div class="chart-section">
-        <div class="chart-container">
-          <div class="chart-box">
-            <div class="chart-canvas-wrapper">
-              <canvas id="escChart"></canvas>
-            </div>
-          </div>
-          <div class="overall-box">
-            <div id="overallEsc" class="overall-display" style="display:none; width:100%;">
-              <div class="overall-label">Overall ESC</div>
-              <div id="overallEscValue" class="overall-value">--</div>
-            </div>
-          </div>
+      <div id="overallEsc" style="margin-bottom:12px;"></div>
+
+      <div style="display:flex; gap:20px;">
+        <div style="flex:1; min-width:400px; height:400px;">
+          <canvas id="escChart"></canvas>
         </div>
       </div>
     </div>
@@ -363,10 +334,7 @@
     const submitBtn = document.getElementById("submitBtn");
     const clearBtn = document.getElementById("clearBtn");
     const output = document.getElementById("prediction");
-    const overallLcoeBox = document.getElementById("overallLcoe");
-    const overallLcoeValue = document.getElementById("overallLcoeValue");
-    const overallEscBox = document.getElementById("overallEsc");
-    const overallEscValue = document.getElementById("overallEscValue");
+    const overallEsc = document.getElementById("overallEsc");
 
     form.addEventListener("input", () => {
       submitBtn.disabled = !form.checkValidity();
@@ -375,10 +343,7 @@
     clearBtn.addEventListener("click", () => {
       form.reset();
       output.textContent = "";
-      overallLcoeBox.style.display = "none";
-      overallLcoeValue.textContent = "--";
-      overallEscBox.style.display = "none";
-      overallEscValue.textContent = "--";
+      overallEsc.textContent = "";
       submitBtn.disabled = true;
 
       if (window.lcoeChart && typeof window.lcoeChart.destroy === 'function') window.lcoeChart.destroy();
@@ -391,8 +356,7 @@
 
       output.textContent = "Estimating...";
       output.className = "loading";
-      overallLcoeBox.style.display = "none";
-      overallEscBox.style.display = "none";
+      overallEsc.textContent = "";
 
       const formData = new FormData(form);
       const params = new URLSearchParams();
@@ -417,83 +381,111 @@
         output.className = "";
 
         if (result.predictions) {
-          output.innerHTML = "<b>Results Generated Successfully</b>";
-          output.className = "";
-
-          // Display Overall LCOE in the box beside the chart
+          output.innerHTML = "";
+          // Display Overall LCOE as text
           if (result.predictions["Overall LCOE"]) {
-            overallLcoeValue.textContent = `${result.predictions["Overall LCOE"]} $/kWh`;
-            overallLcoeBox.style.display = "block";
+            output.innerHTML = `<b>Results:</b><br><br>Overall LCOE: ${result.predictions["Overall LCOE"]} $/kWh`;
           }
 
-          // Display Overall ESC in the box beside the chart
+          // Display overall ESC value as text
+          overallEsc.innerHTML = "";
           if (result.esc && result.esc.length) {
             const overallESC = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length).toFixed(2);
-            overallEscValue.textContent = `${overallESC} $/kWh`;
-            overallEscBox.style.display = "block";
+            overallEsc.innerHTML = `Overall ESC: ${overallESC} $/kWh`;
           }
 
-          // Build LCOE stacked bar (exclude Overall LCOE)
+          // Build LCOE chart with TWO bars: Sub-Models (stacked) + Overall LCOE
           const labels = Object.keys(result.predictions).filter(key => key !== "Overall LCOE");
           const values = labels.map(key => result.predictions[key]);
+          const overallLcoeValue = result.predictions["Overall LCOE"] || 0;
 
           const palette = [
             '#4caf50','#2196f3','#ffc107','#ff5722','#9c27b0',
             '#00bcd4','#8bc34a','#ff9800'
           ];
 
-          const datasets = labels.map((name, i) => ({
+          // Create datasets for sub-models (for first bar - stacked)
+          const subModelDatasets = labels.map((name, i) => ({
             label: name,
-            data: [values[i]],
-            backgroundColor: palette[i % palette.length]
+            data: [values[i], 0], // First bar has values, second bar is 0
+            backgroundColor: palette[i % palette.length],
+            stack: 'stack0'
           }));
+
+          // Add dataset for Overall LCOE (second bar)
+          const overallDataset = {
+            label: 'Overall LCOE',
+            data: [0, overallLcoeValue], // First bar is 0, second bar has overall value
+            backgroundColor: '#1b5e20',
+            stack: 'stack1'
+          };
 
           if (window.lcoeChart && typeof window.lcoeChart.destroy === 'function') window.lcoeChart.destroy();
           const ctx1 = document.getElementById("lcoeChart").getContext("2d");
           window.lcoeChart = new Chart(ctx1, {
             type: 'bar',
-            data: { labels: [""], datasets },
+            data: { 
+              labels: ["Sub-Models", "Overall LCOE"], 
+              datasets: [...subModelDatasets, overallDataset]
+            },
             options: {
               responsive: true,
+              maintainAspectRatio: false,
               plugins: { legend: { position: 'bottom' } },
               scales: {
-                x: { stacked: true },
+                x: { stacked: false },
                 y: {
-                  stacked: true,
+                  stacked: false,
                   beginAtZero: true,
-                  title: { display: true, text: 'LCOE' },
+                  title: { display: true, text: 'LCOE ($/kWh)' },
                   ticks: { font: { weight: 'bold' } }
                 }
               }
             }
           });
 
-          // ESC stacked bar
+          // ESC chart with TWO bars: Sub-Models (stacked) + Overall ESC
           if (result.esc && result.esc.length) {
             const escNames =
               result.esc_model_names ||
               result.esc.map((_, i) => `ESC Model ${i+1}`);
+            
+            const overallESCValue = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length);
 
-            const escDatasets = escNames.map((name, i) => ({
+            // Create datasets for ESC sub-models (for first bar - stacked)
+            const escSubDatasets = escNames.map((name, i) => ({
               label: name,
-              data: [result.esc[i]],
-              backgroundColor: palette[(i+3) % palette.length]
+              data: [result.esc[i], 0], // First bar has values, second bar is 0
+              backgroundColor: palette[(i+3) % palette.length],
+              stack: 'stack0'
             }));
+
+            // Add dataset for Overall ESC (second bar)
+            const escOverallDataset = {
+              label: 'Overall ESC',
+              data: [0, overallESCValue], // First bar is 0, second bar has overall value
+              backgroundColor: '#1b5e20',
+              stack: 'stack1'
+            };
 
             if (window.escChart && typeof window.escChart.destroy === 'function') window.escChart.destroy();
             const ctx2 = document.getElementById("escChart").getContext("2d");
             window.escChart = new Chart(ctx2, {
               type: 'bar',
-              data: { labels: [""], datasets: escDatasets },
+              data: { 
+                labels: ["Sub-Models", "Overall ESC"], 
+                datasets: [...escSubDatasets, escOverallDataset]
+              },
               options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: { legend: { position: 'bottom' } },
                 scales: {
-                  x: { stacked: true },
+                  x: { stacked: false },
                   y: {
-                    stacked: true,
+                    stacked: false,
                     beginAtZero: true,
-                    title: { display: true, text: 'ESC' },
+                    title: { display: true, text: 'ESC ($/kWh)' },
                     ticks: { font: { weight: 'bold' } }
                   }
                 }
@@ -505,16 +497,14 @@
           console.error('Invalid response format:', result);
           output.textContent = "Error: " + (result.error || 'Unexpected response format');
           output.className = "error";
-          overallLcoeBox.style.display = "none";
-          overallEscBox.style.display = "none";
+          overallEsc.textContent = "";
         }
 
       } catch (err) {
         console.error('Fetch or parse error:', err);
         output.textContent = "Prediction failed: " + err.message;
         output.className = "error";
-        overallLcoeBox.style.display = "none";
-        overallEscBox.style.display = "none";
+        overallEsc.textContent = "";
       }
 
       submitBtn.disabled = false;
