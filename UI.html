@@ -478,6 +478,17 @@
     .chart-container {
       opacity: 0;
       animation: fadeInUp 0.8s ease-out forwards;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      border: 1px solid rgba(76, 175, 80, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+      transform: translateY(-2px);
     }
 
     @keyframes fadeInUp {
@@ -489,6 +500,12 @@
         opacity: 1;
         transform: translateY(0);
       }
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 100%;
+      min-height: 350px;
     }
 
     /* Progress Bar */
@@ -597,18 +614,18 @@
 
       </form>
 
-      <div id="prediction" style="margin-bottom:14px;"></div>
+      <div id="prediction" style="margin-bottom:20px;"></div>
 
-      <div class="chart-container" style="display:flex; gap:20px; margin-bottom:12px;">
-        <div style="flex:1; min-width:400px; height:400px;">
+      <div class="chart-container" style="margin-bottom:25px;">
+        <div class="chart-wrapper">
           <canvas id="lcoeChart"></canvas>
         </div>
       </div>
 
-      <div id="overallEsc" style="margin-bottom:12px;"></div>
+      <div id="overallEsc" style="margin-bottom:20px;"></div>
 
-      <div class="chart-container" style="display:flex; gap:20px;">
-        <div style="flex:1; min-width:400px; height:400px;">
+      <div class="chart-container">
+        <div class="chart-wrapper">
           <canvas id="escChart"></canvas>
         </div>
       </div>
@@ -704,41 +721,56 @@
 
         if (result.predictions) {
           output.innerHTML = "";
+          
+          // Build LCOE chart with TWO bars: Sub-Models (stacked) + Overall LCOE
+          const labels = Object.keys(result.predictions).filter(key => key !== "LCOE" && key !== "Overall LCOE");
+          const values = labels.map(key => result.predictions[key]);
+          const overallLcoeValue = result.predictions["LCOE"] || result.predictions["Overall LCOE"] || 0;
+          
           // Display Overall LCOE as text
-          if (result.predictions["LCOE"]) {
-            output.innerHTML = `<b>Results:</b><br><br>Overall LCOE: ${result.predictions["LCOE"]} $/kWh`;
+          if (overallLcoeValue) {
+            output.innerHTML = `<b>Results:</b><br><br>LCOE: ${overallLcoeValue} $/kWh`;
           }
 
           // Display overall ESC value as text
           overallEsc.innerHTML = "";
           if (result.esc && result.esc.length) {
             const overallESC = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length).toFixed(2);
-            overallEsc.innerHTML = `Overall ESC: ${overallESC} $/kWh-th`;
+            overallEsc.innerHTML = `ESC: ${overallESC} $/kWh-th`;
           }
 
-          // Build LCOE chart with TWO bars: Sub-Models (stacked) + Overall LCOE
-          const labels = Object.keys(result.predictions).filter(key => key !== "Overall LCOE");
-          const values = labels.map(key => result.predictions[key]);
-          const overallLcoeValue = result.predictions["Overall LCOE"] || 0;
-
           const palette = [
-            '#4caf50','#2196f3','#ffc107','#ff5722','#9c27b0',
-            '#00bcd4','#8bc34a','#ff9800'
+            { bg: 'rgba(76, 175, 80, 0.9)', border: 'rgba(76, 175, 80, 1)' },
+            { bg: 'rgba(33, 150, 243, 0.9)', border: 'rgba(33, 150, 243, 1)' },
+            { bg: 'rgba(255, 193, 7, 0.9)', border: 'rgba(255, 193, 7, 1)' },
+            { bg: 'rgba(255, 87, 34, 0.9)', border: 'rgba(255, 87, 34, 1)' },
+            { bg: 'rgba(156, 39, 176, 0.9)', border: 'rgba(156, 39, 176, 1)' },
+            { bg: 'rgba(0, 188, 212, 0.9)', border: 'rgba(0, 188, 212, 1)' },
+            { bg: 'rgba(139, 195, 74, 0.9)', border: 'rgba(139, 195, 74, 1)' },
+            { bg: 'rgba(255, 152, 0, 0.9)', border: 'rgba(255, 152, 0, 1)' }
           ];
 
           // Create datasets for sub-models (for first bar - stacked)
           const subModelDatasets = labels.map((name, i) => ({
             label: name,
-            data: [values[i], 0], // First bar has values, second bar is 0
-            backgroundColor: palette[i % palette.length],
+            data: [values[i], 0],
+            backgroundColor: palette[i % palette.length].bg,
+            borderColor: palette[i % palette.length].border,
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false,
             stack: 'stack0'
           }));
 
           // Add dataset for Overall LCOE (second bar)
           const overallDataset = {
             label: 'LCOE',
-            data: [0, overallLcoeValue], // First bar is 0, second bar has overall value
-            backgroundColor: '#1b5e20',
+            data: [0, overallLcoeValue],
+            backgroundColor: 'rgba(27, 94, 32, 0.9)',
+            borderColor: 'rgba(27, 94, 32, 1)',
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false,
             stack: 'stack1'
           };
 
@@ -757,35 +789,65 @@
                 duration: 1500,
                 easing: 'easeInOutQuart'
               },
+              layout: {
+                padding: { top: 10, bottom: 10 }
+              },
               plugins: { 
                 legend: { 
                   position: 'bottom',
                   labels: {
-                    boxWidth: 15,
-                    padding: 10,
-                    font: { size: 11 }
+                    boxWidth: 18,
+                    padding: 15,
+                    font: { size: 12, family: 'Poppins', weight: '500' },
+                    usePointStyle: true,
+                    pointStyle: 'circle'
                   }
                 },
                 tooltip: {
-                  backgroundColor: 'rgba(0,0,0,0.8)',
-                  padding: 12,
-                  cornerRadius: 8,
-                  titleFont: { size: 14, weight: 'bold' },
-                  bodyFont: { size: 13 }
+                  backgroundColor: 'rgba(0,0,0,0.85)',
+                  padding: 15,
+                  cornerRadius: 10,
+                  titleFont: { size: 14, weight: 'bold', family: 'Poppins' },
+                  bodyFont: { size: 13, family: 'Poppins' },
+                  displayColors: true,
+                  boxPadding: 8,
+                  borderColor: 'rgba(255,255,255,0.2)',
+                  borderWidth: 1
                 }
               },
               scales: {
                 x: { 
                   stacked: true,
-                  grid: { display: false },
-                  ticks: { font: { size: 13, weight: 'bold' } }
+                  grid: { 
+                    display: false,
+                    drawBorder: false
+                  },
+                  ticks: { 
+                    font: { size: 13, weight: 'bold', family: 'Poppins' },
+                    color: '#136027',
+                    padding: 10
+                  }
                 },
                 y: {
                   stacked: true,
                   beginAtZero: true,
-                  title: { display: true, text: 'Value ($/kWh)', font: { size: 13, weight: 'bold' } },
-                  ticks: { font: { weight: 'bold' } },
-                  grid: { color: '#e0e0e0' }
+                  title: { 
+                    display: true, 
+                    text: 'Value ($/kWh)', 
+                    font: { size: 14, weight: 'bold', family: 'Poppins' },
+                    color: '#136027',
+                    padding: { bottom: 10 }
+                  },
+                  ticks: { 
+                    font: { weight: '600', family: 'Poppins', size: 11 },
+                    color: '#555',
+                    padding: 8
+                  },
+                  grid: { 
+                    color: 'rgba(0,0,0,0.06)',
+                    lineWidth: 1,
+                    drawBorder: false
+                  }
                 }
               }
             }
@@ -802,16 +864,24 @@
             // Create datasets for ESC sub-models (for first bar - stacked)
             const escSubDatasets = escNames.map((name, i) => ({
               label: name,
-              data: [result.esc[i], 0], // First bar has values, second bar is 0
-              backgroundColor: palette[(i+3) % palette.length],
+              data: [result.esc[i], 0],
+              backgroundColor: palette[(i+3) % palette.length].bg,
+              borderColor: palette[(i+3) % palette.length].border,
+              borderWidth: 2,
+              borderRadius: 8,
+              borderSkipped: false,
               stack: 'stack0'
             }));
 
             // Add dataset for Overall ESC (second bar)
             const escOverallDataset = {
               label: 'ESC',
-              data: [0, overallESCValue], // First bar is 0, second bar has overall value
-              backgroundColor: '#1b5e20',
+              data: [0, overallESCValue],
+              backgroundColor: 'rgba(27, 94, 32, 0.9)',
+              borderColor: 'rgba(27, 94, 32, 1)',
+              borderWidth: 2,
+              borderRadius: 8,
+              borderSkipped: false,
               stack: 'stack1'
             };
 
@@ -831,35 +901,65 @@
                   easing: 'easeInOutQuart',
                   delay: 300
                 },
+                layout: {
+                  padding: { top: 10, bottom: 10 }
+                },
                 plugins: { 
                   legend: { 
                     position: 'bottom',
                     labels: {
-                      boxWidth: 15,
-                      padding: 10,
-                      font: { size: 11 }
+                      boxWidth: 18,
+                      padding: 15,
+                      font: { size: 12, family: 'Poppins', weight: '500' },
+                      usePointStyle: true,
+                      pointStyle: 'circle'
                     }
                   },
                   tooltip: {
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    padding: 12,
-                    cornerRadius: 8,
-                    titleFont: { size: 14, weight: 'bold' },
-                    bodyFont: { size: 13 }
+                    backgroundColor: 'rgba(0,0,0,0.85)',
+                    padding: 15,
+                    cornerRadius: 10,
+                    titleFont: { size: 14, weight: 'bold', family: 'Poppins' },
+                    bodyFont: { size: 13, family: 'Poppins' },
+                    displayColors: true,
+                    boxPadding: 8,
+                    borderColor: 'rgba(255,255,255,0.2)',
+                    borderWidth: 1
                   }
                 },
                 scales: {
                   x: { 
                     stacked: true,
-                    grid: { display: false },
-                    ticks: { font: { size: 13, weight: 'bold' } }
+                    grid: { 
+                      display: false,
+                      drawBorder: false
+                    },
+                    ticks: { 
+                      font: { size: 13, weight: 'bold', family: 'Poppins' },
+                      color: '#136027',
+                      padding: 10
+                    }
                   },
                   y: {
                     stacked: true,
                     beginAtZero: true,
-                    title: { display: true, text: 'Value ($/kWh-th)', font: { size: 13, weight: 'bold' } },
-                    ticks: { font: { weight: 'bold' } },
-                    grid: { color: '#e0e0e0' }
+                    title: { 
+                      display: true, 
+                      text: 'Value ($/kWh-th)', 
+                      font: { size: 14, weight: 'bold', family: 'Poppins' },
+                      color: '#136027',
+                      padding: { bottom: 10 }
+                    },
+                    ticks: { 
+                      font: { weight: '600', family: 'Poppins', size: 11 },
+                      color: '#555',
+                      padding: 8
+                    },
+                    grid: { 
+                      color: 'rgba(0,0,0,0.06)',
+                      lineWidth: 1,
+                      drawBorder: false
+                    }
                   }
                 }
               }
