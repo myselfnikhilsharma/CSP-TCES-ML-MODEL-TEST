@@ -162,7 +162,7 @@
     }
 
     .info-icon::after {
-      content: attr(title);
+      content: attr(data-tooltip);
       position: absolute;
       bottom: 125%;
       left: 50%;
@@ -325,31 +325,31 @@
 
         <!-- ALL TEXT INPUTS AS REQUESTED -->
 
-        <label>Equilibrium Temperature (K) <span class="info-icon" title="Temperature at which the forward and reverse redox reactions are in equilibrium for the TES material.">i</span></label>
+        <label>Equilibrium Temperature (K) <span class="info-icon" data-tooltip="Temperature at which the forward and reverse redox reactions are in equilibrium for the TES material.">i</span></label>
         <input type="text" id="f1" name="f1" placeholder="Enter value (e.g., 1200)" required />
 
-        <label>Heat of Reaction (kJ/mol) <span class="info-icon" title="Enthalpy change of the TES redox reaction per mole of reactant (endothermic in charging, exothermic in discharging).">i</span></label>
+        <label>Heat of Reaction (kJ/mol) <span class="info-icon" data-tooltip="Enthalpy change of the TES redox reaction per mole of reactant (endothermic in charging, exothermic in discharging).">i</span></label>
         <input type="text" id="f2" name="f2" placeholder="Enter value (e.g., 178.5)" required />
 
-        <label>Specific Heat Capacity of A (kJ/kg-K) <span class="info-icon" title="Average specific heat of solid MOₓ (reactant) over the operating temperature range.">i</span></label>
+        <label>Specific Heat Capacity of A (kJ/kg-K) <span class="info-icon" data-tooltip="Average specific heat of solid MOₓ (reactant) over the operating temperature range.">i</span></label>
         <input type="text" id="f3" name="f3" placeholder="Enter value (e.g., 1.25)" required />
 
-        <label>Specific Heat Capacity of B (kJ/kg-K) <span class="info-icon" title="Average specific heat of solid MOᵧ (product) over the operating temperature range.">i</span></label>
+        <label>Specific Heat Capacity of B (kJ/kg-K) <span class="info-icon" data-tooltip="Average specific heat of solid MOᵧ (product) over the operating temperature range.">i</span></label>
         <input type="text" id="f4" name="f4" placeholder="Enter value (e.g., 1.05)" required />
 
-        <label>Density of A (g/cm³) <span class="info-icon" title="Density of solid MOₓ (reactant) at operating conditions.">i</span></label>
+        <label>Density of A (g/cm³) <span class="info-icon" data-tooltip="Density of solid MOₓ (reactant) at operating conditions.">i</span></label>
         <input type="text" id="f5" name="f5" placeholder="Enter value (e.g., 3.58)" required />
 
-        <label>Density of B (g/cm³) <span class="info-icon" title="Density of solid MOᵧ (product).">i</span></label>
+        <label>Density of B (g/cm³) <span class="info-icon" data-tooltip="Density of solid MOᵧ (product).">i</span></label>
         <input type="text" id="f6" name="f6" placeholder="Enter value (e.g., 2.71)" required />
 
-        <label>Price ($/MT) <span class="info-icon" title="Material price of the redox pair per metric ton (feedstock cost).">i</span></label>
+        <label>Price ($/MT) <span class="info-icon" data-tooltip="Material price of the redox pair per metric ton (feedstock cost).">i</span></label>
         <input type="text" id="f7" name="f7" placeholder="Enter value (e.g., 450.00)" required />
 
-        <label>Stoichiometric Coefficient of C <span class="info-icon" title="Stoichiometric coefficient ν = (x–y)/2 in the redox pair MOₓ ⇌ MOᵧ + ν O₂.">i</span></label>
+        <label>Stoichiometric Coefficient of C <span class="info-icon" data-tooltip="Stoichiometric coefficient ν = (x–y)/2 in the redox pair MOₓ ⇌ MOᵧ + ν O₂.">i</span></label>
         <input type="text" id="f8" name="f8" placeholder="Enter value (e.g., 3.0)" required />
 
-        <label>Molecular Weight of A (g/mol) <span class="info-icon" title="Molecular weight of the solid MOₓ (reactant).">i</span></label>
+        <label>Molecular Weight of A (g/mol) <span class="info-icon" data-tooltip="Molecular weight of the solid MOₓ (reactant).">i</span></label>
         <input type="text" id="f9" name="f9" placeholder="Enter value (e.g., 100.09)" required />
 
         <div class="actions">
@@ -442,7 +442,7 @@
           overallEsc.innerHTML = "";
           if (result.esc && result.esc.length) {
             const overallESC = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length).toFixed(2);
-            overallEsc.innerHTML = `Overall ESC: ${overallESC} $/kWh`;
+            overallEsc.innerHTML = `Overall ESC: ${overallESC} $/kWh-th`;
           }
 
           // Build LCOE chart with TWO bars: Sub-Models (stacked) + Overall LCOE
@@ -465,7 +465,7 @@
 
           // Add dataset for Overall LCOE (second bar)
           const overallDataset = {
-            label: 'Overall LCOE',
+            label: 'LCOE',
             data: [0, overallLcoeValue], // First bar is 0, second bar has overall value
             backgroundColor: '#1b5e20',
             stack: 'stack1'
@@ -476,7 +476,7 @@
           window.lcoeChart = new Chart(ctx1, {
             type: 'bar',
             data: { 
-              labels: ["Sub-Models", "Overall LCOE"], 
+              labels: ["Sub-Models", "LCOE"], 
               datasets: [...subModelDatasets, overallDataset]
             },
             options: {
@@ -501,7 +501,7 @@
                 y: {
                   stacked: true,
                   beginAtZero: true,
-                  title: { display: true, text: 'LCOE ($/kWh)', font: { size: 13, weight: 'bold' } },
+                  title: { display: true, text: 'Value ($/kWh)', font: { size: 13, weight: 'bold' } },
                   ticks: { font: { weight: 'bold' } },
                   grid: { color: '#e0e0e0' }
                 }
@@ -527,7 +527,7 @@
 
             // Add dataset for Overall ESC (second bar)
             const escOverallDataset = {
-              label: 'Overall ESC',
+              label: 'ESC',
               data: [0, overallESCValue], // First bar is 0, second bar has overall value
               backgroundColor: '#1b5e20',
               stack: 'stack1'
@@ -538,7 +538,7 @@
             window.escChart = new Chart(ctx2, {
               type: 'bar',
               data: { 
-                labels: ["Sub-Models", "Overall ESC"], 
+                labels: ["Sub-Models", "ESC"], 
                 datasets: [...escSubDatasets, escOverallDataset]
               },
               options: {
@@ -563,7 +563,7 @@
                   y: {
                     stacked: true,
                     beginAtZero: true,
-                    title: { display: true, text: 'ESC ($/kWh)', font: { size: 13, weight: 'bold' } },
+                    title: { display: true, text: 'Value ($/kWh-th)', font: { size: 13, weight: 'bold' } },
                     ticks: { font: { weight: 'bold' } },
                     grid: { color: '#e0e0e0' }
                   }
