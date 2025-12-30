@@ -187,12 +187,52 @@
       min-height: 1.5em;
     }
 
-    #overallEsc {
-      margin: 14px 0 10px;
-      font-size: 17px;
-      font-weight: 600;
-      color: #084312;
-      min-height: 1.5em;
+    .overall-display {
+      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #4caf50;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      margin-bottom: 15px;
+    }
+
+    .overall-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: #2e7d32;
+      margin-bottom: 8px;
+    }
+
+    .overall-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1b5e20;
+    }
+
+    .chart-section {
+      margin-bottom: 35px;
+    }
+
+    .chart-container {
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .chart-box {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .overall-box {
+      flex: 0 0 220px;
+      display: flex;
+      align-items: center;
+    }
+
+    .chart-canvas-wrapper {
+      height: 400px;
     }
 
     .error { color: #b81616; }
@@ -279,17 +319,37 @@
 
       <div id="prediction" style="margin-bottom:14px;"></div>
 
-      <div style="display:flex; gap:20px; margin-bottom:12px;">
-        <div style="flex:1; min-width:400px; height:400px;">
-          <canvas id="lcoeChart"></canvas>
+      <!-- LCOE Section -->
+      <div class="chart-section">
+        <div class="chart-container">
+          <div class="chart-box">
+            <div class="chart-canvas-wrapper">
+              <canvas id="lcoeChart"></canvas>
+            </div>
+          </div>
+          <div class="overall-box">
+            <div id="overallLcoe" class="overall-display" style="display:none; width:100%;">
+              <div class="overall-label">Overall LCOE</div>
+              <div id="overallLcoeValue" class="overall-value">--</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div id="overallEsc" style="margin-bottom:12px;"></div>
-
-      <div style="display:flex; gap:20px;">
-        <div style="flex:1; min-width:400px; height:400px;">
-          <canvas id="escChart"></canvas>
+      <!-- ESC Section -->
+      <div class="chart-section">
+        <div class="chart-container">
+          <div class="chart-box">
+            <div class="chart-canvas-wrapper">
+              <canvas id="escChart"></canvas>
+            </div>
+          </div>
+          <div class="overall-box">
+            <div id="overallEsc" class="overall-display" style="display:none; width:100%;">
+              <div class="overall-label">Overall ESC</div>
+              <div id="overallEscValue" class="overall-value">--</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -303,7 +363,10 @@
     const submitBtn = document.getElementById("submitBtn");
     const clearBtn = document.getElementById("clearBtn");
     const output = document.getElementById("prediction");
-    const overallEsc = document.getElementById("overallEsc");
+    const overallLcoeBox = document.getElementById("overallLcoe");
+    const overallLcoeValue = document.getElementById("overallLcoeValue");
+    const overallEscBox = document.getElementById("overallEsc");
+    const overallEscValue = document.getElementById("overallEscValue");
 
     form.addEventListener("input", () => {
       submitBtn.disabled = !form.checkValidity();
@@ -312,7 +375,10 @@
     clearBtn.addEventListener("click", () => {
       form.reset();
       output.textContent = "";
-      overallEsc.textContent = "";
+      overallLcoeBox.style.display = "none";
+      overallLcoeValue.textContent = "--";
+      overallEscBox.style.display = "none";
+      overallEscValue.textContent = "--";
       submitBtn.disabled = true;
 
       if (window.lcoeChart && typeof window.lcoeChart.destroy === 'function') window.lcoeChart.destroy();
@@ -325,7 +391,8 @@
 
       output.textContent = "Estimating...";
       output.className = "loading";
-      overallEsc.textContent = "";
+      overallLcoeBox.style.display = "none";
+      overallEscBox.style.display = "none";
 
       const formData = new FormData(form);
       const params = new URLSearchParams();
@@ -350,17 +417,20 @@
         output.className = "";
 
         if (result.predictions) {
-          output.innerHTML = "";
-          // Only display "Overall LCOE"
+          output.innerHTML = "<b>Results Generated Successfully</b>";
+          output.className = "";
+
+          // Display Overall LCOE in the box beside the chart
           if (result.predictions["Overall LCOE"]) {
-            output.innerHTML = `<b>Results:</b><br><br>Overall LCOE: ${result.predictions["Overall LCOE"]} $/kWh`;
+            overallLcoeValue.textContent = `${result.predictions["Overall LCOE"]} $/kWh`;
+            overallLcoeBox.style.display = "block";
           }
 
-          // Display only overall ESC value (separate block between charts)
-          overallEsc.innerHTML = "";
+          // Display Overall ESC in the box beside the chart
           if (result.esc && result.esc.length) {
             const overallESC = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length).toFixed(2);
-            overallEsc.innerHTML = `Overall ESC: ${overallESC} $/kWh`;
+            overallEscValue.textContent = `${overallESC} $/kWh`;
+            overallEscBox.style.display = "block";
           }
 
           // Build LCOE stacked bar (exclude Overall LCOE)
@@ -435,14 +505,16 @@
           console.error('Invalid response format:', result);
           output.textContent = "Error: " + (result.error || 'Unexpected response format');
           output.className = "error";
-          overallEsc.textContent = "";
+          overallLcoeBox.style.display = "none";
+          overallEscBox.style.display = "none";
         }
 
       } catch (err) {
         console.error('Fetch or parse error:', err);
         output.textContent = "Prediction failed: " + err.message;
         output.className = "error";
-        overallEsc.textContent = "";
+        overallLcoeBox.style.display = "none";
+        overallEscBox.style.display = "none";
       }
 
       submitBtn.disabled = false;
