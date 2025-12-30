@@ -107,10 +107,12 @@ def predict():
 
         input_array = np.array([features], dtype=np.float32)
         
-        # LCOE predictions
+        # LCOE predictions - FIXED WITH SLICING
         results = []
         for i in range(len(lcoe_interpreters)):
-            input_scaled = lcoe_scalers[i].transform(input_array).astype(np.float32)
+            model_indices = lcoe_feature_indices[i]  # ← USE THE INDICES!
+            X_subset = input_array[:, model_indices]  # ← SLICE FEATURES!
+            input_scaled = lcoe_scalers[i].transform(X_subset).astype(np.float32)
             lcoe_interpreters[i].set_tensor(lcoe_input_details[i][0]['index'], input_scaled)
             lcoe_interpreters[i].invoke()
             pred = lcoe_interpreters[i].get_tensor(lcoe_output_details[i][0]['index'])[0][0]
@@ -118,10 +120,12 @@ def predict():
 
         named_results = {model_names[i]: results[i] for i in range(len(results))}
 
-        # ESC/TES predictions
+        # ESC/TES predictions - FIXED WITH SLICING
         esc_results = []
         for i in range(len(tes_interpreters)):
-            input_scaled_tes = tes_scalers[i].transform(input_array).astype(np.float32)
+            model_indices = tes_feature_indices[i]  # ← USE THE INDICES!
+            X_subset = input_array[:, model_indices]  # ← SLICE FEATURES!
+            input_scaled_tes = tes_scalers[i].transform(X_subset).astype(np.float32)
             tes_interpreters[i].set_tensor(tes_input_details[i][0]['index'], input_scaled_tes)
             tes_interpreters[i].invoke()
             tes_prediction = tes_interpreters[i].get_tensor(tes_output_details[i][0]['index'])[0][0]
@@ -132,6 +136,9 @@ def predict():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 if __name__ == '__main__':
-    app.run(debug=False)
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=False)
 
