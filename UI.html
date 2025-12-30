@@ -262,10 +262,10 @@
       <div id="prediction"></div>
 
       <div style="display:flex; gap:16px; flex-wrap:wrap;">
-        <div style="flex:1; min-width:300px;">
+        <div style="flex:1; min-width:300px; height:450px;">
           <canvas id="lcoeChart"></canvas>
         </div>
-        <div style="flex:1; min-width:300px;">
+        <div style="flex:1; min-width:300px; height:450px;">
           <canvas id="escChart"></canvas>
         </div>
       </div>
@@ -330,13 +330,12 @@
             output.innerHTML += `Overall LCOE: ${result.predictions["Overall LCOE"]} $/kWh<br>`;
           }
           
-          // Display ESC values
+          // Display only overall ESC value
           if (result.esc && result.esc.length) {
             output.innerHTML += "<br>";
-            const escNames = result.esc_model_names || result.esc.map((_, i) => `ESC Model ${i+1}`);
-            escNames.forEach((name, i) => {
-              output.innerHTML += `${name}: ${result.esc[i]} $/kWh<br>`;
-            });
+            // Calculate overall ESC (average of all ESC values)
+            const overallESC = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length).toFixed(2);
+            output.innerHTML += `Overall ESC: ${overallESC} $/kWh<br>`;
           }
 
           // Build LCOE stacked bar
