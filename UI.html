@@ -277,15 +277,15 @@
 
       </form>
 
-      <div id="prediction"></div>
+      <div id="prediction" style="margin-bottom:14px;"></div>
 
-      <div style="display:flex; gap:20px;">
+      <div style="display:flex; gap:20px; margin-bottom:12px;">
         <div style="flex:1; min-width:400px; height:400px;">
           <canvas id="lcoeChart"></canvas>
         </div>
       </div>
 
-      <div id="overallEsc"></div>
+      <div id="overallEsc" style="margin-bottom:12px;"></div>
 
       <div style="display:flex; gap:20px;">
         <div style="flex:1; min-width:400px; height:400px;">
@@ -388,7 +388,12 @@
               plugins: { legend: { position: 'bottom' } },
               scales: {
                 x: { stacked: true },
-                y: { stacked: true, beginAtZero: true, title: { display: true, text: 'LCOE' } }
+                y: {
+                  stacked: true,
+                  beginAtZero: true,
+                  title: { display: true, text: 'LCOE' },
+                  ticks: { font: { weight: 'bold' } }
+                }
               }
             }
           });
@@ -415,7 +420,12 @@
                 plugins: { legend: { position: 'bottom' } },
                 scales: {
                   x: { stacked: true },
-                  y: { stacked: true, beginAtZero: true, title: { display: true, text: 'ESC' } }
+                  y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: { display: true, text: 'ESC' },
+                    ticks: { font: { weight: 'bold' } }
+                  }
                 }
               }
             });
