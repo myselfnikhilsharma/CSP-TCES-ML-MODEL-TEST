@@ -71,6 +71,21 @@ tes_model_names = ["Overall ESC",
                    "ESC Solid Storage Tank",
                    "ESC Storage Material"]
 
+
+
+lcoe_feature_indices = []
+for scaler in lcoe_scalers:
+    n_features = scaler.n_features_in_
+    lcoe_feature_indices.append(list(range(n_features)))
+
+tes_feature_indices = []
+for scaler in tes_scalers:
+    n_features = scaler.n_features_in_
+    tes_feature_indices.append(list(range(n_features)))
+
+print("LCOE models expect:", [len(idx) for idx in lcoe_feature_indices])
+print("TES models expect:", [len(idx) for idx in tes_feature_indices])
+
 @app.route('/')
 def index():
     return send_from_directory('', 'UI.html')
