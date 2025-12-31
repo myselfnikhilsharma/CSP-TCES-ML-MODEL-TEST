@@ -539,31 +539,18 @@
     .chart-container {
       opacity: 0;
       animation: fadeInUp 0.8s ease-out forwards;
-      background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(76, 175, 80, 0.1);
-      border: 2px solid rgba(76, 175, 80, 0.15);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e0e0e0;
+      transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
     }
 
-    .chart-container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #4caf50, #2196f3, #ff9800, #e91e63, #9c27b0);
-      opacity: 0.7;
-    }
-
     .chart-container:hover {
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2), 0 8px 20px rgba(76, 175, 80, 0.15);
-      transform: translateY(-4px);
-      border-color: rgba(76, 175, 80, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     @keyframes fadeInUp {
@@ -855,14 +842,14 @@
           }
 
           const palette = [
-            { bg: 'rgba(46, 204, 113, 0.85)', border: 'rgba(39, 174, 96, 1)', shadow: 'rgba(46, 204, 113, 0.4)' },
-            { bg: 'rgba(52, 152, 219, 0.85)', border: 'rgba(41, 128, 185, 1)', shadow: 'rgba(52, 152, 219, 0.4)' },
-            { bg: 'rgba(241, 196, 15, 0.85)', border: 'rgba(243, 156, 18, 1)', shadow: 'rgba(241, 196, 15, 0.4)' },
-            { bg: 'rgba(231, 76, 60, 0.85)', border: 'rgba(192, 57, 43, 1)', shadow: 'rgba(231, 76, 60, 0.4)' },
-            { bg: 'rgba(155, 89, 182, 0.85)', border: 'rgba(142, 68, 173, 1)', shadow: 'rgba(155, 89, 182, 0.4)' },
-            { bg: 'rgba(26, 188, 156, 0.85)', border: 'rgba(22, 160, 133, 1)', shadow: 'rgba(26, 188, 156, 0.4)' },
-            { bg: 'rgba(52, 73, 94, 0.85)', border: 'rgba(44, 62, 80, 1)', shadow: 'rgba(52, 73, 94, 0.4)' },
-            { bg: 'rgba(230, 126, 34, 0.85)', border: 'rgba(211, 84, 0, 1)', shadow: 'rgba(230, 126, 34, 0.4)' }
+            { bg: 'rgba(67, 97, 238, 0.75)', border: 'rgba(67, 97, 238, 1)', shadow: 'rgba(67, 97, 238, 0.3)' },
+            { bg: 'rgba(76, 175, 80, 0.75)', border: 'rgba(76, 175, 80, 1)', shadow: 'rgba(76, 175, 80, 0.3)' },
+            { bg: 'rgba(244, 143, 177, 0.75)', border: 'rgba(244, 143, 177, 1)', shadow: 'rgba(244, 143, 177, 0.3)' },
+            { bg: 'rgba(255, 167, 38, 0.75)', border: 'rgba(255, 167, 38, 1)', shadow: 'rgba(255, 167, 38, 0.3)' },
+            { bg: 'rgba(120, 144, 156, 0.75)', border: 'rgba(120, 144, 156, 1)', shadow: 'rgba(120, 144, 156, 0.3)' },
+            { bg: 'rgba(171, 71, 188, 0.75)', border: 'rgba(171, 71, 188, 1)', shadow: 'rgba(171, 71, 188, 0.3)' },
+            { bg: 'rgba(38, 198, 218, 0.75)', border: 'rgba(38, 198, 218, 1)', shadow: 'rgba(38, 198, 218, 0.3)' },
+            { bg: 'rgba(255, 112, 67, 0.75)', border: 'rgba(255, 112, 67, 1)', shadow: 'rgba(255, 112, 67, 0.3)' }
           ];
 
           // Create datasets for sub-models (for first bar - stacked)
@@ -871,26 +858,24 @@
             data: [values[i], 0],
             backgroundColor: palette[i % palette.length].bg,
             borderColor: palette[i % palette.length].border,
-            borderWidth: 2.5,
-            borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
+            borderWidth: 1,
+            borderRadius: 4,
             borderSkipped: false,
             stack: 'stack0',
-            barThickness: 80,
-            maxBarThickness: 100
+            barThickness: 60
           }));
 
           // Add dataset for Overall LCOE (second bar)
           const overallDataset = {
             label: 'LCOE',
             data: [0, overallLcoeValue],
-            backgroundColor: 'rgba(21, 87, 36, 0.9)',
-            borderColor: 'rgba(27, 94, 32, 1)',
-            borderWidth: 2.5,
-            borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
+            backgroundColor: 'rgba(46, 125, 50, 0.8)',
+            borderColor: 'rgba(46, 125, 50, 1)',
+            borderWidth: 1,
+            borderRadius: 4,
             borderSkipped: false,
             stack: 'stack1',
-            barThickness: 80,
-            maxBarThickness: 100
+            barThickness: 60
           };
 
           lcoeChartContainer.style.display = 'block';
@@ -906,43 +891,38 @@
               responsive: true,
               maintainAspectRatio: false,
               animation: {
-                duration: 1800,
-                easing: 'easeInOutCubic',
-                animateRotate: true,
-                animateScale: true
+                duration: 1000,
+                easing: 'easeInOutQuad'
               },
               interaction: {
                 mode: 'index',
                 intersect: false
               },
               layout: {
-                padding: { top: 20, bottom: 15, left: 15, right: 15 }
+                padding: { top: 10, bottom: 10, left: 10, right: 10 }
               },
               plugins: { 
                 legend: { 
                   position: 'bottom',
                   labels: {
-                    boxWidth: 20,
-                    padding: 18,
-                    font: { size: 13, family: 'Poppins', weight: '600' },
-                    usePointStyle: true,
-                    pointStyle: 'rectRounded',
-                    color: '#2c3e50'
+                    boxWidth: 12,
+                    padding: 12,
+                    font: { size: 11, family: 'Poppins', weight: '500' },
+                    usePointStyle: false,
+                    color: '#424242'
                   }
                 },
                 tooltip: {
                   enabled: true,
-                  backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                  padding: 16,
-                  cornerRadius: 12,
-                  titleFont: { size: 15, weight: 'bold', family: 'Poppins' },
-                  bodyFont: { size: 14, family: 'Poppins' },
+                  backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                  padding: 12,
+                  cornerRadius: 4,
+                  titleFont: { size: 13, weight: '600', family: 'Poppins' },
+                  bodyFont: { size: 12, family: 'Poppins' },
                   displayColors: true,
-                  boxPadding: 10,
-                  borderColor: 'rgba(76, 175, 80, 0.5)',
-                  borderWidth: 2,
-                  caretSize: 8,
-                  caretPadding: 10,
+                  boxPadding: 6,
+                  borderColor: 'rgba(200, 200, 200, 0.5)',
+                  borderWidth: 1,
                   callbacks: {
                     label: function(context) {
                       let label = context.dataset.label || '';
@@ -962,7 +942,8 @@
                   stacked: true,
                   grid: { 
                     display: false,
-                    drawBorder: false
+                    drawBorder: true,
+                    borderColor: '#9e9e9e'
                   },
                   ticks: { 
                     display: false
@@ -974,22 +955,23 @@
                   title: { 
                     display: true, 
                     text: 'LCOE ($/kWh)', 
-                    font: { size: 15, weight: 'bold', family: 'Poppins' },
-                    color: '#136027',
-                    padding: { bottom: 12 }
+                    font: { size: 13, weight: '600', family: 'Poppins' },
+                    color: '#424242',
+                    padding: { bottom: 8 }
                   },
                   ticks: { 
-                    font: { weight: '600', family: 'Poppins', size: 12 },
-                    color: '#34495e',
-                    padding: 10,
+                    font: { weight: '500', family: 'Poppins', size: 11 },
+                    color: '#616161',
+                    padding: 8,
                     callback: function(value) {
                       return '$' + value.toFixed(3);
                     }
                   },
                   grid: { 
-                    color: 'rgba(149, 165, 166, 0.15)',
-                    lineWidth: 1.5,
-                    drawBorder: false,
+                    color: 'rgba(158, 158, 158, 0.2)',
+                    lineWidth: 1,
+                    drawBorder: true,
+                    borderColor: '#9e9e9e',
                     drawTicks: false
                   }
                 }
@@ -1017,16 +999,28 @@
             // Create datasets for ESC sub-models (stacked in single bar)
             const escSubDatasets = escNames.map((name, i) => ({
               label: name,
-              data: [escValues[i]],
+              data: [escValues[i], 0],
               backgroundColor: palette[(i+3) % palette.length].bg,
               borderColor: palette[(i+3) % palette.length].border,
-              borderWidth: 2.5,
-              borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
+              borderWidth: 1,
+              borderRadius: 4,
               borderSkipped: false,
               stack: 'stack0',
-              barThickness: 80,
-              maxBarThickness: 100
+              barThickness: 60
             }));
+
+            // Add dataset for Overall ESC (second bar)
+            const escOverallDataset = {
+              label: 'ESC',
+              data: [0, overallESCValue],
+              backgroundColor: 'rgba(46, 125, 50, 0.8)',
+              borderColor: 'rgba(46, 125, 50, 1)',
+              borderWidth: 1,
+              borderRadius: 4,
+              borderSkipped: false,
+              stack: 'stack1',
+              barThickness: 60
+            };
 
             escChartContainer.style.display = 'block';
             if (window.escChart && typeof window.escChart.destroy === 'function') window.escChart.destroy();
@@ -1034,51 +1028,46 @@
             window.escChart = new Chart(ctx2, {
               type: 'bar',
               data: { 
-                labels: ["ESC Components"], 
-                datasets: escSubDatasets
+                labels: ["Sub-Models", "ESC"], 
+                datasets: [...escSubDatasets, escOverallDataset]
               },
               options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: {
-                  duration: 1800,
-                  easing: 'easeInOutCubic',
-                  delay: 300,
-                  animateRotate: true,
-                  animateScale: true
+                  duration: 1000,
+                  easing: 'easeInOutQuad',
+                  delay: 200
                 },
                 interaction: {
                   mode: 'index',
                   intersect: false
                 },
                 layout: {
-                  padding: { top: 20, bottom: 15, left: 15, right: 15 }
+                  padding: { top: 10, bottom: 10, left: 10, right: 10 }
                 },
                 plugins: { 
                   legend: { 
                     position: 'bottom',
                     labels: {
-                      boxWidth: 20,
-                      padding: 18,
-                      font: { size: 13, family: 'Poppins', weight: '600' },
-                      usePointStyle: true,
-                      pointStyle: 'rectRounded',
-                      color: '#2c3e50'
+                      boxWidth: 12,
+                      padding: 12,
+                      font: { size: 11, family: 'Poppins', weight: '500' },
+                      usePointStyle: false,
+                      color: '#424242'
                     }
                   },
                   tooltip: {
                     enabled: true,
-                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                    padding: 16,
-                    cornerRadius: 12,
-                    titleFont: { size: 15, weight: 'bold', family: 'Poppins' },
-                    bodyFont: { size: 14, family: 'Poppins' },
+                    backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                    padding: 12,
+                    cornerRadius: 4,
+                    titleFont: { size: 13, weight: '600', family: 'Poppins' },
+                    bodyFont: { size: 12, family: 'Poppins' },
                     displayColors: true,
-                    boxPadding: 10,
-                    borderColor: 'rgba(76, 175, 80, 0.5)',
-                    borderWidth: 2,
-                    caretSize: 8,
-                    caretPadding: 10,
+                    boxPadding: 6,
+                    borderColor: 'rgba(200, 200, 200, 0.5)',
+                    borderWidth: 1,
                     callbacks: {
                       label: function(context) {
                         let label = context.dataset.label || '';
@@ -1098,7 +1087,8 @@
                     stacked: true,
                     grid: { 
                       display: false,
-                      drawBorder: false
+                      drawBorder: true,
+                      borderColor: '#9e9e9e'
                     },
                     ticks: { 
                       display: false
@@ -1110,22 +1100,23 @@
                     title: { 
                       display: true, 
                       text: 'ESC ($/kWh-th)', 
-                      font: { size: 15, weight: 'bold', family: 'Poppins' },
-                      color: '#136027',
-                      padding: { bottom: 12 }
+                      font: { size: 13, weight: '600', family: 'Poppins' },
+                      color: '#424242',
+                      padding: { bottom: 8 }
                     },
                     ticks: { 
-                      font: { weight: '600', family: 'Poppins', size: 12 },
-                      color: '#34495e',
-                      padding: 10,
+                      font: { weight: '500', family: 'Poppins', size: 11 },
+                      color: '#616161',
+                      padding: 8,
                       callback: function(value) {
                         return '$' + value.toFixed(3);
                       }
                     },
                     grid: { 
-                      color: 'rgba(149, 165, 166, 0.15)',
-                      lineWidth: 1.5,
-                      drawBorder: false,
+                      color: 'rgba(158, 158, 158, 0.2)',
+                      lineWidth: 1,
+                      drawBorder: true,
+                      borderColor: '#9e9e9e',
                       drawTicks: false
                     }
                   }
