@@ -997,18 +997,27 @@
             }
           });
 
-          // ESC chart with TWO bars: Sub-Models (stacked) + Overall ESC
+          // ESC chart with sub-models only (no overall ESC in chart)
           if (result.esc && result.esc.length) {
-            const escNames =
+            let escNames =
               result.esc_model_names ||
               result.esc.map((_, i) => `ESC Model ${i+1}`);
+            
+            // Filter out any "ESC" or "Overall ESC" entries
+            const filteredIndices = escNames.map((name, i) => {
+              const lowerName = name.toLowerCase();
+              return (!lowerName.includes('overall') && !lowerName.match(/^esc$/i)) ? i : -1;
+            }).filter(i => i !== -1);
+            
+            escNames = filteredIndices.map(i => escNames[i]);
+            const escValues = filteredIndices.map(i => result.esc[i]);
             
             const overallESCValue = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length);
 
             // Create datasets for ESC sub-models (stacked in single bar)
             const escSubDatasets = escNames.map((name, i) => ({
               label: name,
-              data: [result.esc[i]],
+              data: [escValues[i]],
               backgroundColor: palette[(i+3) % palette.length].bg,
               borderColor: palette[(i+3) % palette.length].border,
               borderWidth: 2.5,
