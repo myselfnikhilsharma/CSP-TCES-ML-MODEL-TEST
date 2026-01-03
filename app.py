@@ -30,7 +30,7 @@ interpreter_tes, scaler_tes, in_tes, out_tes = load_model_and_scaler(
 
 @app.route('/')
 def index():
-    return render_template('ui.html')   # ✅ FIX
+    return render_template('UI.html')   # ✅ FIX
 
 
 @app.route('/predict', methods=['POST'])
