@@ -3,923 +3,309 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSP–TES ML Estimator</title>
-
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+  <title>Thermal System Estimator</title>
   <style>
-    * { 
-      box-sizing: border-box; 
-      margin: 0;
-      padding: 0;
+    /* Reset and base styles */
+    * {
+      box-sizing: border-box;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
+    /* Background with full page image and overlay */
     body {
       margin: 0;
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 50%, #f3e5f5 100%);
-      background-attachment: fixed;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: 'Segoe UI', sans-serif;
       color: #333;
-      overflow-x: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
       position: relative;
+      transition: background-color 0.3s, color 0.3s;
+      background-image: url("CST.jpg");
+      background-size: 100% 50%;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
+    /* Overlay to dim background for readability */
     body::before {
-      content: '';
+      content: "";
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        radial-gradient(circle at 20% 50%, rgba(76, 175, 80, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(33, 150, 243, 0.03) 0%, transparent 50%);
-      pointer-events: none;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: rgba(0,0,0,0.4);
       z-index: 0;
     }
 
-    /* HEADER */
-    .header-bar {
-      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #388e3c 100%);
-      color: #fff;
-      padding: 28px 20px;
-      text-align: center;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 50;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 2px 10px rgba(76, 175, 80, 0.3);
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
+    /* Dark mode styles */
+    body.dark-mode {
+      color: #e0e0e0;
+      background-color: #121212;
+      background-image: url('CST.jpg');
+      filter: brightness(0.6);
     }
 
-    .header-bar::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    body.dark-mode::before {
+      background: rgba(0, 0, 0, 0.7);
     }
 
-    .header-title {
-      font-size: 2.1em;
-      font-weight: 600;
-      letter-spacing: 1px;
-      animation: fadeInDown 0.8s ease-out;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-      line-height: 1.3;
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .banner {
-      margin-top: 8px;
-      height: 26px;
-      color: #e7ffe7;
-      opacity: 0.9;
-      overflow: hidden;
-    }
-
-    .banner-text {
-      position: absolute;
-      white-space: nowrap;
-      animation: slide-left 16s linear infinite;
-      font-size: 1.05em;
-    }
-
-    .banner-text:hover {
-      animation-play-state: paused;
-      cursor: pointer;
-    }
-
-    @keyframes slide-left {
-      from { transform: translateX(100%); }
-      to   { transform: translateX(-100%); }
-    }
-
-    /* MAIN CONTENT */
-    .main-container {
-      display: flex;
-      gap: 25px;
-      padding: 40px 30px 50px;
-      margin-top: 140px;
-      flex: 1;
-      animation: fadeIn 1s ease-out;
+    /* Main container styles */
+    .container {
       position: relative;
-      z-index: 1;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @media (max-width: 1024px) {
-      .main-container {
-        flex-direction: column;
-        padding: 30px 20px 40px;
-      }
-    }
-
-    /* LEFT COLUMN */
-    .left-column {
-      flex: 1.3;
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-    }
-
-    .image-box {
-      flex: 0 0 auto;
-      height: 400px;
-      background-image: url("CST.png");
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      border-radius: 12px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-      background-color: #fff;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 20px 15px 15px 15px;
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #136027;
-      letter-spacing: 0.5px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      min-height: 300px;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      will-change: transform;
-    }
-
-    .image-box:hover {
-      transform: translateY(-5px) translateZ(0);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-    }
-
-    .info-box {
-      flex: 1;
-      background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,255,254,0.95) 100%);
-      padding: 28px;
+      z-index: 1; /* Above overlay */
+      background-color: rgba(249, 249, 249, 0.95);
+      width: 100%;
+      max-width: 500px;
       border-radius: 16px;
-      backdrop-filter: blur(12px);
-      border: 2px solid rgba(76, 175, 80, 0.2);
-      font-size: 16px;
-      line-height: 1.8;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      transition: all 0.3s ease;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      will-change: transform;
+      padding: 30px 25px;
+      box-shadow: 0 0 15px rgba(0, 128, 0, 0.3);
+      transition: background-color 0.3s;
     }
 
-    .info-box:hover {
-      transform: translateY(-3px) translateZ(0);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-      border-color: rgba(76, 175, 80, 0.4);
-    }
-
-    .info-box p {
-      margin: 0;
-    }
-
-    .info-box b {
-      color: #1b5e20;
-      font-weight: 600;
-    }
-
-    /* RIGHT COLUMN */
-    .right-column {
-      flex: 0.8;
-      background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(250,255,253,0.98) 100%);
-      padding: 35px;
-      border-radius: 20px;
-      border: 2px solid rgba(76, 175, 80, 0.15);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
-      animation: slideInRight 0.8s ease-out;
-      transition: box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-
-    .right-column:hover {
-      box-shadow: 0 12px 36px rgba(0,0,0,0.22);
-      border-color: rgba(76, 175, 80, 0.3);
-    }
-
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .right-column {
-        padding: 20px;
-      }
+    body.dark-mode .container {
+      background-color: rgba(30, 30, 30, 0.9);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
     }
 
     h2 {
       text-align: center;
-      color: #1b5e20;
-      font-size: 28px;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
       font-weight: 600;
-      position: relative;
-      padding-bottom: 15px;
+      color: #2e7d32;
+      transition: color 0.3s;
     }
 
-    h2::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 4px;
-      background: linear-gradient(90deg, #4caf50, #2e7d32);
-      border-radius: 2px;
+    body.dark-mode h2 {
+      color: #81c784;
     }
 
-    /* FORM */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
     label {
       font-weight: 600;
-      margin-top: 20px;
-      display: block;
-      font-size: 15px;
-      color: #1b5e20;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: color 0.3s ease;
+      font-size: 14px;
+      color: #444;
+      transition: color 0.3s;
+      user-select: none;
     }
 
-    label:hover {
-      color: #2e7d32;
+    body.dark-mode label {
+      color: #ccc;
     }
 
-    .info-icon {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 18px;
-      height: 18px;
-      background: #4caf50;
-      color: white;
-      border-radius: 50%;
-      text-align: center;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: help;
-      transition: all 0.3s ease;
-    }
-
-    .info-icon:hover {
-      background: #388e3c;
-      transform: scale(1.1);
-    }
-
-    .info-icon::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #333;
-      color: white;
-      padding: 10px 14px;
+    select, input {
+      padding: 12px;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      font-size: 12px;
-      font-weight: normal;
-      white-space: normal;
-      width: 280px;
-      line-height: 1.5;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      pointer-events: none;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-
-    .info-icon::before {
-      content: '';
-      position: absolute;
-      bottom: 115%;
-      left: 50%;
-      transform: translateX(-50%);
-      border: 6px solid transparent;
-      border-top-color: #333;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-
-    .info-icon:hover::after,
-    .info-icon:hover::before {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 14px;
-      margin-top: 8px;
-      border-radius: 12px;
-      border: 2px solid #e0e0e0;
-      background: #ffffff;
+      background-color: #fff;
+      color: #333;
       font-size: 15px;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      font-family: 'Poppins', sans-serif;
+      transition: border-color 0.3s, background-color 0.3s, color 0.3s;
     }
 
-    input:hover {
-      border-color: #4caf50;
-      box-shadow: 0 3px 8px rgba(76,175,80,0.15);
-      transform: translateY(-1px);
+    body.dark-mode select, 
+    body.dark-mode input {
+      background-color: #2a2a2a;
+      border-color: #555;
+      color: #e0e0e0;
     }
 
-    input:focus, select:focus {
-      border-color: #1a7f38;
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(76,175,80,0.2);
-      background: #fafffe;
-      transform: scale(1.01);
+    select:focus, input:focus {
+      border-color: #2e7d32;
+      outline: 2px solid #a5d6a7;
     }
 
-    input.valid {
-      border-color: #4caf50;
-      background: #f1f8f4;
-    }
-
-    input.invalid:not(:focus) {
-      border-color: #f44336;
-      animation: shake 0.5s;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-
-    input::placeholder {
-      color: #999;
-      font-size: 13px;
-      font-style: italic;
-    }
-
-    /* BUTTONS */
     .actions {
       display: flex;
-      gap: 12px;
-      margin-top: 25px;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 10px;
     }
 
     button {
       flex: 1;
-      padding: 13px;
-      font-size: 15px;
-      font-weight: 600;
+      padding: 12px 0;
+      background-color: #2e7d32;
+      color: white;
+      font-weight: bold;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      font-family: 'Poppins', sans-serif;
+      transition: background 0.3s ease;
+      user-select: none;
     }
 
-    button::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.3);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+    button:hover:not(:disabled) {
+      background-color: #1b5e20;
     }
 
-    button:hover::before {
-      width: 300px;
-      height: 300px;
-    }
-
-    button:active {
-      transform: scale(0.95);
-    }
-
-    #submitBtn {
-      background: linear-gradient(135deg, #0b6f12, #044408);
-      color: white;
-      box-shadow: 0 4px 12px rgba(11, 111, 18, 0.3);
-    }
-
-    #submitBtn:hover:not(:disabled) {
-      background: linear-gradient(135deg, #0d8015, #055009);
-      box-shadow: 0 6px 16px rgba(11, 111, 18, 0.4);
-      transform: translateY(-2px);
-    }
-
-    #submitBtn:disabled {
-      background: #9e9e9e;
-      cursor: not-allowed;
-      box-shadow: none;
-      opacity: 0.6;
-    }
-
-    #submitBtn.loading {
-      pointer-events: none;
-    }
-
-    #submitBtn.loading::after {
-      content: '';
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      top: 50%;
-      left: 50%;
-      margin-left: -8px;
-      margin-top: -8px;
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spinner 0.6s linear infinite;
-    }
-
-    @keyframes spinner {
-      to { transform: rotate(360deg); }
-    }
-
-    #clearBtn {
-      background: #c62828;
-      color: white;
-      box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
-    }
-
-    #clearBtn:hover {
-      background: #d32f2f;
-      box-shadow: 0 6px 16px rgba(198, 40, 40, 0.4);
-      transform: translateY(-2px);
+    button:disabled {
+      background-color: #9e9e9e;
+      cursor: default;
     }
 
     #prediction {
-      margin-top: 22px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #1b5e20;
-      min-height: 1.5em;
-      padding: 16px 20px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(139, 195, 74, 0.08));
-      transition: all 0.3s ease;
-      border: 2px solid rgba(76, 175, 80, 0.2);
-    }
-
-    #overallEsc {
-      margin: 18px 0 10px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #1b5e20;
-      min-height: 1.5em;
-      padding: 16px 20px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(139, 195, 74, 0.08));
-      transition: all 0.3s ease;
-      border: 2px solid rgba(76, 175, 80, 0.2);
-    }
-
-    .error { 
-      color: #b81616;
-      background: rgba(244, 67, 54, 0.1) !important;
-      border-left: 4px solid #b81616;
-      animation: slideInLeft 0.3s ease;
-    }
-
-    .loading { 
-      color: #aa6c00;
-      background: rgba(255, 193, 7, 0.1) !important;
-      border-left: 4px solid #aa6c00;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-
-    @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
-    .results-box {
-      background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,253,244,0.98) 100%);
-      border: 2px solid rgba(76, 175, 80, 0.3);
-      border-radius: 16px;
-      padding: 30px;
       margin-top: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      animation: fadeInUp 0.8s ease-out;
-      transition: all 0.3s ease;
-    }
-
-    .results-box:hover {
-      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-      border-color: rgba(76, 175, 80, 0.5);
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .result-item {
-      padding: 20px;
-      margin: 15px 0;
-      background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(139, 195, 74, 0.08));
-      border-left: 5px solid #4caf50;
-      border-radius: 8px;
-      font-size: 24px;
-      font-weight: 600;
-      color: #1b5e20;
-      transition: all 0.3s ease;
-    }
-
-    .result-item:hover {
-      transform: translateX(5px);
-      background: linear-gradient(135deg, rgba(76, 175, 80, 0.12), rgba(139, 195, 74, 0.12));
-      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
-    }
-
-    .result-label {
-      font-size: 16px;
-      font-weight: 500;
-      color: #2e7d32;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .result-value {
-      font-size: 32px;
-      font-weight: 700;
-      color: #1b5e20;
-    }
-
-    /* Progress Bar */
-    .progress-container {
-      width: 100%;
-      height: 4px;
-      background: #e0e0e0;
-      border-radius: 2px;
-      overflow: hidden;
-      margin: 20px 0;
-      display: none;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #4caf50, #8bc34a);
-      animation: progress 2s ease-in-out infinite;
-    }
-
-    @keyframes progress {
-      0% { width: 0%; }
-      50% { width: 70%; }
-      100% { width: 100%; }
-    }
-
-    /* FOOTER */
-    .footer {
-      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-      color: #fff;
       text-align: center;
-      padding: 25px 20px;
-      margin-top: auto;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-      font-size: 14px;
-      line-height: 1.6;
-      position: relative;
-      z-index: 1;
+      font-size: 18px;
+      font-weight: bold;
+      color: #2e7d32;
+      min-height: 1.5em;
+      transition: color 0.3s;
+      user-select: none;
     }
 
-    .footer::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    body.dark-mode #prediction {
+      color: #81c784;
     }
 
-    .footer a {
-      color: #a5d6a7;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s ease;
+    .error {
+      color: #d32f2f;
     }
 
-    .footer a:hover {
-      color: #c8e6c9;
-      text-decoration: underline;
+    .loading {
+      color: #f57c00;
     }
 
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px 15px;
+      }
+
+      input, select, button {
+        font-size: 14px;
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
-
-
 <body>
+  <div class="container" role="main" aria-label="Thermal Energy System Estimator Application">
+    <h2>Thermal Energy System Estimator</h2>
+    <form id="predictionForm" novalidate>
+      <label for="model_choice">Prediction Type</label>
+      <select id="model_choice" name="model_choice" required>
+        <option value="" disabled selected>Select Prediction Type</option>
+        <option value="LCOE">LCOE (Levelized Cost of Energy)</option>
+        <option value="TES">ESC (Energy Storage Cost)</option>
+      </select>
 
-  <!-- HEADER -->
-  <div class="header-bar">
-    <div class="header-title">
-      CSP–TES ML Tool: Predict Optimal LCOE & Thermochemical Energy Storage Cost
-    </div>
-    <div class="banner">
-      <div class="banner-text">
-        Developed by: Ishan Bajaj Research Group, IIT Kanpur &nbsp;|&nbsp; Contact: ibajaj@iitk.ac.in
+      <label for="f1">Equilibrium Temperature (K)</label>
+      <input type="number" id="f1" name="f1" step="0.01" min="0" placeholder="Equilibrium Temperature (K)" required />
+      
+      <label for="f2">Heat of Reaction (kJ/mol)</label>
+      <input type="number" id="f2" name="f2" step="0.01" placeholder="Heat of Reaction (kJ/mol)" required />
+      
+      <label for="f3">Specific Heat Capacity of A (kJ/kg-K)</label>
+      <input type="number" id="f3" name="f3" step="0.01" min="0" placeholder="Specific Heat Capacity of A (kJ/kg-K)" required />
+      
+      <label for="f4">Specific Heat Capacity of B (kJ/kg-K)</label>
+      <input type="number" id="f4" name="f4" step="0.01" min="0" placeholder="Specific Heat Capacity of B (kJ/kg-K)" required />
+      
+      <label for="f5">Density of A (g/cm³)</label>
+      <input type="number" id="f5" name="f5" step="0.01" min="0" placeholder="Density of A (g/cm³)" required />
+      
+      <label for="f6">Density of B (g/cm³)</label>
+      <input type="number" id="f6" name="f6" step="0.01" min="0" placeholder="Density of B (g/cm³)" required />
+      
+      <label for="f7">Price ($/MT)</label>
+      <input type="number" id="f7" name="f7" step="0.01" min="0" placeholder="Price ($/MT)" required />
+      
+      <label for="f8">Stoichiometric Coefficient of C</label>
+      <input type="number" id="f8" name="f8" step="0.01" placeholder="Stoichiometric Coeff. of C" required />
+      
+      <label for="f9">Molecular Weight of A (g/mol)</label>
+      <input type="number" id="f9" name="f9" step="0.01" min="0" placeholder="Molecular Weight of A (g/mol)" required />
+      
+      <div class="actions">
+        <button type="submit" id="submitBtn" disabled>Estimate</button>
+        <button type="button" id="clearBtn" aria-label="Clear all input fields">Clear</button>
       </div>
-    </div>
-  </div>
-
-  <!-- MAIN -->
-  <div class="main-container">
-
-    <!-- LEFT -->
-    <div class="left-column">
-      <div class="image-box"></div>
-
-      <div class="info-box">
-        <p>
-          <b>About This Tool</b><br><br>
-          This machine learning application predicts the optimal <b>Levelized Cost of Electricity (LCOE)</b> and <b>Energy Storage Cost (ESC)</b> for concentrated solar power plants with thermochemical energy storage.
-          <br><br>
-          <b>CSP-TES System Consists of:</b><br>
-          • Solar Collectors<br>
-          • High-Temperature Receivers<br>
-          • Thermochemical Energy Storage Reactors<br>
-          • Power Conversion Cycle<br>
-          <br>
-          The model is trained on data from a stochastic programming-based optimization model that considers seasonal solar variability, material properties, and techno-economic constraints for a 100 MW CSP-TES plant.
-          <br><br>
-
-          <b>Key Features:</b><br>
-          • Instant predictions (seconds vs hours of optimization)<br>
-          • Considers 9 material properties<br>
-          • Based on redox reaction: MOₓ ⇌ MOᵧ + ν O₂<br>
-          • Open-loop configuration with s-CO₂ Brayton cycle
-        </p>
-      </div>
-    </div>
-
-    <!-- RIGHT -->
-    <div class="right-column">
-      <h2>Thermal Energy System Estimator</h2>
-
-      <form id="predictionForm" novalidate>
-
-        <!-- ALL TEXT INPUTS AS REQUESTED -->
-
-        <label>Equilibrium Temperature (K) <span class="info-icon" data-tooltip="Temperature at which the forward and reverse redox reactions are in equilibrium for the TES material.">i</span></label>
-        <input type="text" id="f1" name="f1" placeholder="Enter value (e.g., 1200)" required />
-
-        <label>Heat of Reaction (kJ/mol) <span class="info-icon" data-tooltip="Enthalpy change of the TES redox reaction per mole of reactant (endothermic in charging, exothermic in discharging).">i</span></label>
-        <input type="text" id="f2" name="f2" placeholder="Enter value (e.g., 178.5)" required />
-
-        <label>Specific Heat Capacity of MOₓ (kJ/kg-K) <span class="info-icon" data-tooltip="Average specific heat of solid MOₓ (reactant) over the operating temperature range.">i</span></label>
-        <input type="text" id="f3" name="f3" placeholder="Enter value (e.g., 1.25)" required />
-
-        <label>Specific Heat Capacity of MOᵧ (kJ/kg-K) <span class="info-icon" data-tooltip="Average specific heat of solid MOᵧ (product) over the operating temperature range.">i</span></label>
-        <input type="text" id="f4" name="f4" placeholder="Enter value (e.g., 1.05)" required />
-
-        <label>Density of MOₓ (g/cm³) <span class="info-icon" data-tooltip="Density of solid MOₓ (reactant) at operating conditions.">i</span></label>
-        <input type="text" id="f5" name="f5" placeholder="Enter value (e.g., 3.58)" required />
-
-        <label>Density of MOᵧ (g/cm³) <span class="info-icon" data-tooltip="Density of solid MOᵧ (product).">i</span></label>
-        <input type="text" id="f6" name="f6" placeholder="Enter value (e.g., 2.71)" required />
-
-        <label>Price ($/MT) <span class="info-icon" data-tooltip="Material price of the redox pair per metric ton (feedstock cost).">i</span></label>
-        <input type="text" id="f7" name="f7" placeholder="Enter value (e.g., 450.00)" required />
-
-        <label>Stoichiometric Coefficient of O₂ <span class="info-icon" data-tooltip="Stoichiometric coefficient ν = (x–y)/2 in the redox pair MOₓ ⇌ MOᵧ + ν O₂.">i</span></label>
-        <input type="text" id="f8" name="f8" placeholder="Enter value (e.g., 3.0)" required />
-
-        <label>Molecular Weight of MOₓ (g/mol) <span class="info-icon" data-tooltip="Molecular weight of the solid MOₓ (reactant).">i</span></label>
-        <input type="text" id="f9" name="f9" placeholder="Enter value (e.g., 100.09)" required />
-
-        <div class="actions">
-          <button type="submit" id="submitBtn" disabled>Estimate</button>
-          <button type="button" id="clearBtn">Clear</button>
-        </div>
-
-        <div class="progress-container" id="progressBar">
-          <div class="progress-bar"></div>
-        </div>
-
-      </form>
-
-      <div id="prediction" style="margin-bottom:20px; display:none;"></div>
-
-      <div id="resultsContainer" style="display:none;">
-        <div class="results-box">
-          <h3 style="text-align: center; color: #1b5e20; margin-bottom: 25px; font-size: 22px; font-weight: 600;">🎯 Estimation Results</h3>
-          <div class="result-item">
-            <div class="result-label">💡 LCOE (Levelized Cost of Energy)</div>
-            <div class="result-value" id="lcoeValue">--</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">⚡ ESC (Energy Storage Cost)</div>
-            <div class="result-value" id="escValue">--</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    </form>
+    <div id="prediction" aria-live="polite"></div>
+    <button id="darkModeToggle" aria-label="Toggle dark mode" style="margin-top:15px; background:#2e7d32;">Toggle Dark Mode</button>
   </div>
 
   <script>
-    const form = document.getElementById("predictionForm");
-    const submitBtn = document.getElementById("submitBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const output = document.getElementById("prediction");
-    const progressBar = document.getElementById("progressBar");
-    const resultsContainer = document.getElementById("resultsContainer");
-    const lcoeValue = document.getElementById("lcoeValue");
-    const escValue = document.getElementById("escValue");
+    const form = document.getElementById('predictionForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const predictionOutput = document.getElementById('prediction');
+    const darkModeToggle = document.getElementById('darkModeToggle');
 
-    // Real-time validation for inputs
-    const inputs = form.querySelectorAll('input[type="text"]');
-    inputs.forEach(input => {
-      input.addEventListener('input', (e) => {
-        const value = e.target.value.trim();
-        if (value === '') {
-          e.target.classList.remove('valid', 'invalid');
-        } else if (!isNaN(value) && value !== '') {
-          e.target.classList.add('valid');
-          e.target.classList.remove('invalid');
-        } else {
-          e.target.classList.add('invalid');
-          e.target.classList.remove('valid');
-        }
-      });
-
-      // Remove invalid class on focus
-      input.addEventListener('focus', (e) => {
-        e.target.classList.remove('invalid');
-      });
-    });
-
-    form.addEventListener("input", () => {
+    // Enable submit button only if the form is valid
+    form.addEventListener('input', () => {
       submitBtn.disabled = !form.checkValidity();
     });
 
-    clearBtn.addEventListener("click", () => {
+    // Clear form and output
+    clearBtn.addEventListener('click', () => {
       form.reset();
-      output.textContent = "";
-      output.style.display = 'none';
+      predictionOutput.textContent = '';
       submitBtn.disabled = true;
-      progressBar.style.display = 'none';
-      resultsContainer.style.display = 'none';
-      lcoeValue.textContent = '--';
-      escValue.textContent = '--';
-
-      // Remove validation classes
-      inputs.forEach(input => {
-        input.classList.remove('valid', 'invalid');
-      });
     });
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      submitBtn.disabled = true;
-      submitBtn.classList.add('loading');
-      progressBar.style.display = 'block';
+    // Dark mode toggle
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
 
-      output.textContent = "Estimating...";
-      output.className = "loading";
-      output.style.display = 'block';
-      resultsContainer.style.display = 'none';
+    // Handle form submission
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      predictionOutput.textContent = '';
+      submitBtn.disabled = true;
+
+      // Show loading state
+      predictionOutput.textContent = 'Estimating...';
+      predictionOutput.className = 'loading';
 
       const formData = new FormData(form);
       const params = new URLSearchParams();
-      formData.forEach((v, k) => params.append(k, v));
-      console.log('Sending form data:', params.toString());
+      formData.forEach((value, key) => params.append(key, value));
 
       try {
-        const res = await fetch("/predict", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: params
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params,
         });
 
-        console.log('Response status:', res.status);
-        if (!res.ok) {
-          const bodyText = await res.text();
-          console.error('Server returned non-OK status', res.status, bodyText);
-          throw new Error('Server error: ' + res.status + ' - ' + bodyText);
-        }
-        const result = await res.json();
-        console.log('Response data:', result);
-        output.className = "";
-        progressBar.style.display = 'none';
-        submitBtn.classList.remove('loading');
+        const result = await response.json();
 
-        if (result.predictions) {
-          output.textContent = "";
-          output.style.display = 'none';
-          
-          // Get LCOE value
-          const overallLcoeValue = result.predictions["LCOE"] || result.predictions["Overall LCOE"] || 0;
-          
-          // Get ESC value
-          let overallESCValue = 0;
-          if (result.esc && result.esc.length) {
-            overallESCValue = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length);
+        if (result.prediction !== undefined) {
+          const valueFormatted = parseFloat(result.prediction).toFixed(2);
+
+          let unitText = '';
+          const modelChoice = formData.get('model_choice');
+          if (modelChoice === 'LCOE') {
+            unitText = ' $/kWh';
+          } else if (modelChoice === 'TES') {
+            unitText = ' $/kWh storage';
           }
 
-          // Display results
-          if (overallLcoeValue || overallESCValue) {
-            resultsContainer.style.display = 'block';
-            lcoeValue.textContent = overallLcoeValue ? `$${overallLcoeValue} /kWh` : 'N/A';
-            escValue.textContent = overallESCValue ? `$${overallESCValue.toFixed(4)} /kWh-th` : 'N/A';
-          } else {
-            output.textContent = "No results available";
-            output.className = "error";
-            output.style.display = 'block';
-          }
-
+          predictionOutput.textContent = `Estimated Value: ${valueFormatted}${unitText}`;
+          predictionOutput.className = '';
         } else {
-          console.error('Invalid response format:', result);
-          output.textContent = "Error: " + (result.error || 'Unexpected response format');
-          output.className = "error";
-          output.style.display = 'block';
+          predictionOutput.textContent = `Error: ${result.error}`;
+          predictionOutput.className = 'error';
         }
-
       } catch (err) {
-        console.error('Fetch or parse error:', err);
-        output.textContent = "Prediction failed: " + err.message;
-        output.className = "error";
-        output.style.display = 'block';
-        resultsContainer.style.display = 'none';
-        progressBar.style.display = 'none';
-        submitBtn.classList.remove('loading');
+        predictionOutput.textContent = "Prediction failed. Try again.";
+        predictionOutput.className = 'error';
+      } finally {
+        submitBtn.disabled = false;
       }
-
-      submitBtn.disabled = false;
     });
-
   </script>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    <p><strong>CSP–TES ML Estimator</strong></p>
-    <p>Advanced Machine Learning Tool for Concentrated Solar Power & Thermochemical Energy Storage Analysis</p>
-    <p style="margin-top: 10px; font-size: 13px; opacity: 0.9;">© 2025 Ishan Bajaj Research Group | IIT Kanpur | All Rights Reserved</p>
-  </div>
-
 </body>
 </html>
