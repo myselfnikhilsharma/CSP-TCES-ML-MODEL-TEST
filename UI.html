@@ -52,14 +52,13 @@
       color: #fff;
       padding: 28px 20px;
       text-align: center;
-      position: sticky;
+      position: fixed;
       top: 0;
       width: 100%;
       z-index: 50;
       box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 2px 10px rgba(76, 175, 80, 0.3);
       backdrop-filter: blur(10px);
       transition: all 0.3s ease;
-      position: relative;
     }
 
     .header-bar::after {
@@ -122,6 +121,7 @@
       display: flex;
       gap: 25px;
       padding: 40px 30px 50px;
+      margin-top: 140px;
       flex: 1;
       animation: fadeIn 1s ease-out;
       position: relative;
@@ -152,9 +152,9 @@
       flex: 0 0 auto;
       height: 400px;
       background-image: url("CST.png");
-      background-size: 85%;
+      background-size: contain;
       background-repeat: no-repeat;
-      background-position: center bottom;
+      background-position: center;
       border-radius: 12px;
       box-shadow: 0 6px 16px rgba(0,0,0,0.15);
       background-color: #fff;
@@ -162,15 +162,19 @@
       align-items: flex-start;
       justify-content: center;
       padding: 20px 15px 15px 15px;
-      font-size: 24px;
+      font-size: 1.5rem;
       font-weight: 600;
       color: #136027;
       letter-spacing: 0.5px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      min-height: 300px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      will-change: transform;
     }
 
     .image-box:hover {
-      transform: translateY(-5px);
+      transform: translateY(-5px) translateZ(0);
       box-shadow: 0 12px 24px rgba(0,0,0,0.2);
     }
 
@@ -185,10 +189,13 @@
       line-height: 1.8;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
       transition: all 0.3s ease;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      will-change: transform;
     }
 
     .info-box:hover {
-      transform: translateY(-3px);
+      transform: translateY(-3px) translateZ(0);
       box-shadow: 0 12px 30px rgba(0,0,0,0.2);
       border-color: rgba(76, 175, 80, 0.4);
     }
@@ -211,6 +218,12 @@
       border: 2px solid rgba(76, 175, 80, 0.15);
       box-shadow: 0 8px 30px rgba(0,0,0,0.18);
       animation: slideInRight 0.8s ease-out;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    .right-column:hover {
+      box-shadow: 0 12px 36px rgba(0,0,0,0.22);
+      border-color: rgba(76, 175, 80, 0.3);
     }
 
     @keyframes slideInRight {
@@ -536,21 +549,20 @@
       50% { opacity: 0.7; }
     }
 
-    .chart-container {
-      opacity: 0;
-      animation: fadeInUp 0.8s ease-out forwards;
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 25px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      border: 1px solid #e0e0e0;
+    .results-box {
+      background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,253,244,0.98) 100%);
+      border: 2px solid rgba(76, 175, 80, 0.3);
+      border-radius: 16px;
+      padding: 30px;
+      margin-top: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      animation: fadeInUp 0.8s ease-out;
       transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
     }
 
-    .chart-container:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    .results-box:hover {
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      border-color: rgba(76, 175, 80, 0.5);
     }
 
     @keyframes fadeInUp {
@@ -564,10 +576,37 @@
       }
     }
 
-    .chart-wrapper {
-      position: relative;
-      height: 100%;
-      min-height: 380px;
+    .result-item {
+      padding: 20px;
+      margin: 15px 0;
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(139, 195, 74, 0.08));
+      border-left: 5px solid #4caf50;
+      border-radius: 8px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #1b5e20;
+      transition: all 0.3s ease;
+    }
+
+    .result-item:hover {
+      transform: translateX(5px);
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.12), rgba(139, 195, 74, 0.12));
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    }
+
+    .result-label {
+      font-size: 16px;
+      font-weight: 500;
+      color: #2e7d32;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .result-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1b5e20;
     }
 
     /* Progress Bar */
@@ -652,16 +691,27 @@
 
     <!-- LEFT -->
     <div class="left-column">
-      <div class="image-box">CSP System</div>
+      <div class="image-box"></div>
 
       <div class="info-box">
         <p>
-          A typical concentrated solar thermal (CSP) with thermochemical energy storage (TES) system comprises:
+          <b>About This Tool</b><br><br>
+          This machine learning application predicts the optimal <b>Levelized Cost of Electricity (LCOE)</b> and <b>Energy Storage Cost (ESC)</b> for concentrated solar power plants with thermochemical energy storage.
           <br><br>
-          • <b>Solar Collectors</b><br>
-          • <b>High-Temperature Receivers</b><br>
-          • <b>Thermochemical Energy Storage Reactors</b><br>
-          • <b>Power Conversion Cycle</b><br>
+          <b>CSP-TES System Consists of:</b><br>
+          • Solar Collectors<br>
+          • High-Temperature Receivers<br>
+          • Thermochemical Energy Storage Reactors<br>
+          • Power Conversion Cycle<br>
+          <br>
+          The model is trained on data from a stochastic programming-based optimization model that considers seasonal solar variability, material properties, and techno-economic constraints for a 100 MW CSP-TES plant.
+          <br><br>
+
+          <b>Key Features:</b><br>
+          • Instant predictions (seconds vs hours of optimization)<br>
+          • Considers 9 material properties<br>
+          • Based on redox reaction: MOₓ ⇌ MOᵧ + ν O₂<br>
+          • Open-loop configuration with s-CO₂ Brayton cycle
         </p>
       </div>
     </div>
@@ -680,25 +730,25 @@
         <label>Heat of Reaction (kJ/mol) <span class="info-icon" data-tooltip="Enthalpy change of the TES redox reaction per mole of reactant (endothermic in charging, exothermic in discharging).">i</span></label>
         <input type="text" id="f2" name="f2" placeholder="Enter value (e.g., 178.5)" required />
 
-        <label>Specific Heat Capacity of A (kJ/kg-K) <span class="info-icon" data-tooltip="Average specific heat of solid MOₓ (reactant) over the operating temperature range.">i</span></label>
+        <label>Specific Heat Capacity of MOₓ (kJ/kg-K) <span class="info-icon" data-tooltip="Average specific heat of solid MOₓ (reactant) over the operating temperature range.">i</span></label>
         <input type="text" id="f3" name="f3" placeholder="Enter value (e.g., 1.25)" required />
 
-        <label>Specific Heat Capacity of B (kJ/kg-K) <span class="info-icon" data-tooltip="Average specific heat of solid MOᵧ (product) over the operating temperature range.">i</span></label>
+        <label>Specific Heat Capacity of MOᵧ (kJ/kg-K) <span class="info-icon" data-tooltip="Average specific heat of solid MOᵧ (product) over the operating temperature range.">i</span></label>
         <input type="text" id="f4" name="f4" placeholder="Enter value (e.g., 1.05)" required />
 
-        <label>Density of A (g/cm³) <span class="info-icon" data-tooltip="Density of solid MOₓ (reactant) at operating conditions.">i</span></label>
+        <label>Density of MOₓ (g/cm³) <span class="info-icon" data-tooltip="Density of solid MOₓ (reactant) at operating conditions.">i</span></label>
         <input type="text" id="f5" name="f5" placeholder="Enter value (e.g., 3.58)" required />
 
-        <label>Density of B (g/cm³) <span class="info-icon" data-tooltip="Density of solid MOᵧ (product).">i</span></label>
+        <label>Density of MOᵧ (g/cm³) <span class="info-icon" data-tooltip="Density of solid MOᵧ (product).">i</span></label>
         <input type="text" id="f6" name="f6" placeholder="Enter value (e.g., 2.71)" required />
 
         <label>Price ($/MT) <span class="info-icon" data-tooltip="Material price of the redox pair per metric ton (feedstock cost).">i</span></label>
         <input type="text" id="f7" name="f7" placeholder="Enter value (e.g., 450.00)" required />
 
-        <label>Stoichiometric Coefficient of C <span class="info-icon" data-tooltip="Stoichiometric coefficient ν = (x–y)/2 in the redox pair MOₓ ⇌ MOᵧ + ν O₂.">i</span></label>
+        <label>Stoichiometric Coefficient of O₂ <span class="info-icon" data-tooltip="Stoichiometric coefficient ν = (x–y)/2 in the redox pair MOₓ ⇌ MOᵧ + ν O₂.">i</span></label>
         <input type="text" id="f8" name="f8" placeholder="Enter value (e.g., 3.0)" required />
 
-        <label>Molecular Weight of A (g/mol) <span class="info-icon" data-tooltip="Molecular weight of the solid MOₓ (reactant).">i</span></label>
+        <label>Molecular Weight of MOₓ (g/mol) <span class="info-icon" data-tooltip="Molecular weight of the solid MOₓ (reactant).">i</span></label>
         <input type="text" id="f9" name="f9" placeholder="Enter value (e.g., 100.09)" required />
 
         <div class="actions">
@@ -712,36 +762,34 @@
 
       </form>
 
-      <div id="prediction" style="margin-bottom:20px;"></div>
+      <div id="prediction" style="margin-bottom:20px; display:none;"></div>
 
-      <div class="chart-container" id="lcoeChartContainer" style="margin-bottom:25px; display:none;">
-        <div class="chart-wrapper">
-          <canvas id="lcoeChart"></canvas>
-        </div>
-      </div>
-
-      <div id="overallEsc" style="margin-bottom:20px;"></div>
-
-      <div class="chart-container" id="escChartContainer" style="display:none;">
-        <div class="chart-wrapper">
-          <canvas id="escChart"></canvas>
+      <div id="resultsContainer" style="display:none;">
+        <div class="results-box">
+          <h3 style="text-align: center; color: #1b5e20; margin-bottom: 25px; font-size: 22px; font-weight: 600;">🎯 Estimation Results</h3>
+          <div class="result-item">
+            <div class="result-label">💡 LCOE (Levelized Cost of Energy)</div>
+            <div class="result-value" id="lcoeValue">--</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">⚡ ESC (Energy Storage Cost)</div>
+            <div class="result-value" id="escValue">--</div>
+          </div>
         </div>
       </div>
     </div>
 
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <script>
     const form = document.getElementById("predictionForm");
     const submitBtn = document.getElementById("submitBtn");
     const clearBtn = document.getElementById("clearBtn");
     const output = document.getElementById("prediction");
-    const overallEsc = document.getElementById("overallEsc");
     const progressBar = document.getElementById("progressBar");
-    const lcoeChartContainer = document.getElementById("lcoeChartContainer");
-    const escChartContainer = document.getElementById("escChartContainer");
+    const resultsContainer = document.getElementById("resultsContainer");
+    const lcoeValue = document.getElementById("lcoeValue");
+    const escValue = document.getElementById("escValue");
 
     // Real-time validation for inputs
     const inputs = form.querySelectorAll('input[type="text"]');
@@ -772,19 +820,17 @@
     clearBtn.addEventListener("click", () => {
       form.reset();
       output.textContent = "";
-      overallEsc.textContent = "";
+      output.style.display = 'none';
       submitBtn.disabled = true;
       progressBar.style.display = 'none';
-      lcoeChartContainer.style.display = 'none';
-      escChartContainer.style.display = 'none';
+      resultsContainer.style.display = 'none';
+      lcoeValue.textContent = '--';
+      escValue.textContent = '--';
 
       // Remove validation classes
       inputs.forEach(input => {
         input.classList.remove('valid', 'invalid');
       });
-
-      if (window.lcoeChart && typeof window.lcoeChart.destroy === 'function') window.lcoeChart.destroy();
-      if (window.escChart && typeof window.escChart.destroy === 'function') window.escChart.destroy();
     });
 
     form.addEventListener("submit", async (e) => {
@@ -795,7 +841,8 @@
 
       output.textContent = "Estimating...";
       output.className = "loading";
-      overallEsc.textContent = "";
+      output.style.display = 'block';
+      resultsContainer.style.display = 'none';
 
       const formData = new FormData(form);
       const params = new URLSearchParams();
@@ -822,321 +869,42 @@
         submitBtn.classList.remove('loading');
 
         if (result.predictions) {
-          output.innerHTML = "";
+          output.textContent = "";
+          output.style.display = 'none';
           
-          // Build LCOE chart with TWO bars: Sub-Models (stacked) + Overall LCOE
-          const labels = Object.keys(result.predictions).filter(key => key !== "LCOE" && key !== "Overall LCOE");
-          const values = labels.map(key => result.predictions[key]);
+          // Get LCOE value
           const overallLcoeValue = result.predictions["LCOE"] || result.predictions["Overall LCOE"] || 0;
           
-          // Display Overall LCOE as text
-          if (overallLcoeValue) {
-            output.innerHTML = `<b>Results:</b><br><br>LCOE: ${overallLcoeValue} $/kWh`;
+          // Get ESC value
+          let overallESCValue = 0;
+          if (result.esc && result.esc.length) {
+            overallESCValue = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length);
           }
 
-          // Display overall ESC value as text
-          overallEsc.innerHTML = "";
-          if (result.esc && result.esc.length) {
-            const overallESC = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length).toFixed(2);
-            overallEsc.innerHTML = `ESC: ${overallESC} $/kWh-th`;
-          }
-
-          const palette = [
-            { bg: 'rgba(67, 97, 238, 0.75)', border: 'rgba(67, 97, 238, 1)', shadow: 'rgba(67, 97, 238, 0.3)' },
-            { bg: 'rgba(76, 175, 80, 0.75)', border: 'rgba(76, 175, 80, 1)', shadow: 'rgba(76, 175, 80, 0.3)' },
-            { bg: 'rgba(244, 143, 177, 0.75)', border: 'rgba(244, 143, 177, 1)', shadow: 'rgba(244, 143, 177, 0.3)' },
-            { bg: 'rgba(255, 167, 38, 0.75)', border: 'rgba(255, 167, 38, 1)', shadow: 'rgba(255, 167, 38, 0.3)' },
-            { bg: 'rgba(120, 144, 156, 0.75)', border: 'rgba(120, 144, 156, 1)', shadow: 'rgba(120, 144, 156, 0.3)' },
-            { bg: 'rgba(171, 71, 188, 0.75)', border: 'rgba(171, 71, 188, 1)', shadow: 'rgba(171, 71, 188, 0.3)' },
-            { bg: 'rgba(38, 198, 218, 0.75)', border: 'rgba(38, 198, 218, 1)', shadow: 'rgba(38, 198, 218, 0.3)' },
-            { bg: 'rgba(255, 112, 67, 0.75)', border: 'rgba(255, 112, 67, 1)', shadow: 'rgba(255, 112, 67, 0.3)' }
-          ];
-
-          // Create datasets for sub-models (for first bar - stacked)
-          const subModelDatasets = labels.map((name, i) => ({
-            label: name,
-            data: [values[i], 0],
-            backgroundColor: palette[i % palette.length].bg,
-            borderColor: palette[i % palette.length].border,
-            borderWidth: 1,
-            borderRadius: 4,
-            borderSkipped: false,
-            stack: 'stack0',
-            barThickness: 60
-          }));
-
-          // Add dataset for Overall LCOE (second bar)
-          const overallDataset = {
-            label: 'LCOE',
-            data: [0, overallLcoeValue],
-            backgroundColor: 'rgba(46, 125, 50, 0.8)',
-            borderColor: 'rgba(46, 125, 50, 1)',
-            borderWidth: 1,
-            borderRadius: 4,
-            borderSkipped: false,
-            stack: 'stack1',
-            barThickness: 60
-          };
-
-          lcoeChartContainer.style.display = 'block';
-          if (window.lcoeChart && typeof window.lcoeChart.destroy === 'function') window.lcoeChart.destroy();
-          const ctx1 = document.getElementById("lcoeChart").getContext("2d");
-          window.lcoeChart = new Chart(ctx1, {
-            type: 'bar',
-            data: { 
-              labels: ["Sub-Models", "LCOE"], 
-              datasets: [...subModelDatasets, overallDataset]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              animation: {
-                duration: 1000,
-                easing: 'easeInOutQuad'
-              },
-              interaction: {
-                mode: 'index',
-                intersect: false
-              },
-              layout: {
-                padding: { top: 10, bottom: 10, left: 10, right: 10 }
-              },
-              plugins: { 
-                legend: { 
-                  position: 'bottom',
-                  labels: {
-                    boxWidth: 12,
-                    padding: 12,
-                    font: { size: 11, family: 'Poppins', weight: '500' },
-                    usePointStyle: false,
-                    color: '#424242'
-                  }
-                },
-                tooltip: {
-                  enabled: true,
-                  backgroundColor: 'rgba(33, 33, 33, 0.95)',
-                  padding: 12,
-                  cornerRadius: 4,
-                  titleFont: { size: 13, weight: '600', family: 'Poppins' },
-                  bodyFont: { size: 12, family: 'Poppins' },
-                  displayColors: true,
-                  boxPadding: 6,
-                  borderColor: 'rgba(200, 200, 200, 0.5)',
-                  borderWidth: 1,
-                  callbacks: {
-                    label: function(context) {
-                      let label = context.dataset.label || '';
-                      if (label) {
-                        label += ': ';
-                      }
-                      if (context.parsed.y !== null) {
-                        label += '$' + context.parsed.y.toFixed(4) + '/kWh';
-                      }
-                      return label;
-                    }
-                  }
-                }
-              },
-              scales: {
-                x: { 
-                  stacked: true,
-                  grid: { 
-                    display: false,
-                    drawBorder: true,
-                    borderColor: '#9e9e9e'
-                  },
-                  ticks: { 
-                    display: false
-                  }
-                },
-                y: {
-                  stacked: true,
-                  beginAtZero: true,
-                  title: { 
-                    display: true, 
-                    text: 'LCOE ($/kWh)', 
-                    font: { size: 13, weight: '600', family: 'Poppins' },
-                    color: '#424242',
-                    padding: { bottom: 8 }
-                  },
-                  ticks: { 
-                    font: { weight: '500', family: 'Poppins', size: 11 },
-                    color: '#616161',
-                    padding: 8,
-                    callback: function(value) {
-                      return '$' + value.toFixed(3);
-                    }
-                  },
-                  grid: { 
-                    color: 'rgba(158, 158, 158, 0.2)',
-                    lineWidth: 1,
-                    drawBorder: true,
-                    borderColor: '#9e9e9e',
-                    drawTicks: false
-                  }
-                }
-              }
-            }
-          });
-
-          // ESC chart with sub-models only (no overall ESC in chart)
-          if (result.esc && result.esc.length) {
-            let escNames =
-              result.esc_model_names ||
-              result.esc.map((_, i) => `ESC Model ${i+1}`);
-            
-            // Filter out any "ESC" or "Overall ESC" entries
-            const filteredIndices = escNames.map((name, i) => {
-              const lowerName = name.toLowerCase();
-              return (!lowerName.includes('overall') && !lowerName.match(/^esc$/i)) ? i : -1;
-            }).filter(i => i !== -1);
-            
-            escNames = filteredIndices.map(i => escNames[i]);
-            const escValues = filteredIndices.map(i => result.esc[i]);
-            
-            const overallESCValue = (result.esc.reduce((a, b) => a + b, 0) / result.esc.length);
-
-            // Create datasets for ESC sub-models (stacked in single bar)
-            const escSubDatasets = escNames.map((name, i) => ({
-              label: name,
-              data: [escValues[i], 0],
-              backgroundColor: palette[(i+3) % palette.length].bg,
-              borderColor: palette[(i+3) % palette.length].border,
-              borderWidth: 1,
-              borderRadius: 4,
-              borderSkipped: false,
-              stack: 'stack0',
-              barThickness: 60
-            }));
-
-            // Add dataset for Overall ESC (second bar)
-            const escOverallDataset = {
-              label: 'ESC',
-              data: [0, overallESCValue],
-              backgroundColor: 'rgba(46, 125, 50, 0.8)',
-              borderColor: 'rgba(46, 125, 50, 1)',
-              borderWidth: 1,
-              borderRadius: 4,
-              borderSkipped: false,
-              stack: 'stack1',
-              barThickness: 60
-            };
-
-            escChartContainer.style.display = 'block';
-            if (window.escChart && typeof window.escChart.destroy === 'function') window.escChart.destroy();
-            const ctx2 = document.getElementById("escChart").getContext("2d");
-            window.escChart = new Chart(ctx2, {
-              type: 'bar',
-              data: { 
-                labels: ["Sub-Models", "ESC"], 
-                datasets: [...escSubDatasets, escOverallDataset]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                  duration: 1000,
-                  easing: 'easeInOutQuad',
-                  delay: 200
-                },
-                interaction: {
-                  mode: 'index',
-                  intersect: false
-                },
-                layout: {
-                  padding: { top: 10, bottom: 10, left: 10, right: 10 }
-                },
-                plugins: { 
-                  legend: { 
-                    position: 'bottom',
-                    labels: {
-                      boxWidth: 12,
-                      padding: 12,
-                      font: { size: 11, family: 'Poppins', weight: '500' },
-                      usePointStyle: false,
-                      color: '#424242'
-                    }
-                  },
-                  tooltip: {
-                    enabled: true,
-                    backgroundColor: 'rgba(33, 33, 33, 0.95)',
-                    padding: 12,
-                    cornerRadius: 4,
-                    titleFont: { size: 13, weight: '600', family: 'Poppins' },
-                    bodyFont: { size: 12, family: 'Poppins' },
-                    displayColors: true,
-                    boxPadding: 6,
-                    borderColor: 'rgba(200, 200, 200, 0.5)',
-                    borderWidth: 1,
-                    callbacks: {
-                      label: function(context) {
-                        let label = context.dataset.label || '';
-                        if (label) {
-                          label += ': ';
-                        }
-                        if (context.parsed.y !== null) {
-                          label += '$' + context.parsed.y.toFixed(4) + '/kWh-th';
-                        }
-                        return label;
-                      }
-                    }
-                  }
-                },
-                scales: {
-                  x: { 
-                    stacked: true,
-                    grid: { 
-                      display: false,
-                      drawBorder: true,
-                      borderColor: '#9e9e9e'
-                    },
-                    ticks: { 
-                      display: false
-                    }
-                  },
-                  y: {
-                    stacked: true,
-                    beginAtZero: true,
-                    title: { 
-                      display: true, 
-                      text: 'ESC ($/kWh-th)', 
-                      font: { size: 13, weight: '600', family: 'Poppins' },
-                      color: '#424242',
-                      padding: { bottom: 8 }
-                    },
-                    ticks: { 
-                      font: { weight: '500', family: 'Poppins', size: 11 },
-                      color: '#616161',
-                      padding: 8,
-                      callback: function(value) {
-                        return '$' + value.toFixed(3);
-                      }
-                    },
-                    grid: { 
-                      color: 'rgba(158, 158, 158, 0.2)',
-                      lineWidth: 1,
-                      drawBorder: true,
-                      borderColor: '#9e9e9e',
-                      drawTicks: false
-                    }
-                  }
-                }
-              }
-            });
+          // Display results
+          if (overallLcoeValue || overallESCValue) {
+            resultsContainer.style.display = 'block';
+            lcoeValue.textContent = overallLcoeValue ? `$${overallLcoeValue} /kWh` : 'N/A';
+            escValue.textContent = overallESCValue ? `$${overallESCValue.toFixed(4)} /kWh-th` : 'N/A';
+          } else {
+            output.textContent = "No results available";
+            output.className = "error";
+            output.style.display = 'block';
           }
 
         } else {
           console.error('Invalid response format:', result);
           output.textContent = "Error: " + (result.error || 'Unexpected response format');
           output.className = "error";
-          overallEsc.textContent = "";
+          output.style.display = 'block';
         }
 
       } catch (err) {
         console.error('Fetch or parse error:', err);
         output.textContent = "Prediction failed: " + err.message;
         output.className = "error";
-        overallEsc.textContent = "";
+        output.style.display = 'block';
+        resultsContainer.style.display = 'none';
         progressBar.style.display = 'none';
         submitBtn.classList.remove('loading');
       }
